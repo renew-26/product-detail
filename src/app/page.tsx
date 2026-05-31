@@ -2675,9 +2675,6 @@ function SizeOptions({
                   style={{
                     cursor: "pointer",
                     background: sel ? B.accentSoft : B.canvas,
-                    borderLeft: sel
-                      ? `3px solid ${B.accent}`
-                      : "3px solid transparent",
                     transition: "background 0.15s",
                   }}
                 >
@@ -3415,24 +3412,34 @@ export default function Page() {
     if (!previewRef.current) return;
     setExporting(true);
 
-    // overflow 제약 일시 해제 → 전체 높이 캡처
-    const outer = outerRef.current;
+    // scrollWrapRef만 제약 해제 → outerRef(사이드바 포함)는 건드리지 않음
     const scroller = scrollWrapRef.current;
-    const prevOuterOverflow = outer?.style.overflow ?? "";
-    const prevOuterHeight = outer?.style.height ?? "";
     const prevScrollOverflow = scroller?.style.overflowY ?? "";
     const prevScrollHeight = scroller?.style.height ?? "";
-    if (outer) { outer.style.overflow = "visible"; outer.style.height = "auto"; }
-    if (scroller) { scroller.style.overflowY = "visible"; scroller.style.height = "auto"; }
+    const prevScrollPadding = scroller?.style.padding ?? "";
+    const prevScrollJustify = scroller?.style.justifyContent ?? "";
+    // 스크롤 위치 리셋: 스크롤된 상태에서 캡처하면 getBoundingClientRect 오프셋 발생
+    if (scroller) scroller.scrollTop = 0;
+    if (scroller) {
+      scroller.style.overflowY = "visible";
+      scroller.style.height = "auto";
+      // padding·justify 제거: flex 컨테이너 offset이 캡처 위치를 밀어냄
+      scroller.style.padding = "0";
+      scroller.style.justifyContent = "flex-start";
+    }
 
     try {
       const html2canvas = (await import("html2canvas")).default;
       const el = previewRef.current;
+      // 폰트 로딩 완료 대기: 폰트 미로드 시 line-height·자간이 fallback 폰트 기준으로 렌더링됨
+      await document.fonts.ready;
       const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
+        scrollX: 0,
+        scrollY: 0,
         ignoreElements: (el: Element) => el.classList.contains("export-ignore"),
       });
       const link = document.createElement("a");
@@ -3443,9 +3450,13 @@ export default function Page() {
       console.error(err);
       alert("PNG 익스포트 중 오류가 발생했습니다.");
     } finally {
-      // overflow 제약 복원
-      if (outer) { outer.style.overflow = prevOuterOverflow; outer.style.height = prevOuterHeight; }
-      if (scroller) { scroller.style.overflowY = prevScrollOverflow; scroller.style.height = prevScrollHeight; }
+      // scrollWrapRef만 복원
+      if (scroller) {
+        scroller.style.overflowY = prevScrollOverflow;
+        scroller.style.height = prevScrollHeight;
+        scroller.style.padding = prevScrollPadding;
+        scroller.style.justifyContent = prevScrollJustify;
+      }
       setExporting(false);
     }
   };
