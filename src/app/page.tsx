@@ -2208,6 +2208,253 @@ function PerformanceSection({
 }
 
 // ═══════════════════════════════════════════════════════
+// RentalProcess — 렌탈 서비스 프로세스 (4단계)
+// ═══════════════════════════════════════════════════════
+function RentalProcess() {
+  const steps = [
+    {
+      num: "01",
+      title: "상담 신청",
+      desc: "원하는 타이어를 선택하고 온라인 또는 전화로 렌탈 신청",
+      Icon: () => (
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="6" width="24" height="20" rx="2" />
+          <polyline points="4,12 16,19 28,12" />
+        </svg>
+      ),
+    },
+    {
+      num: "02",
+      title: "심사 & 승인",
+      desc: "간단한 신용 심사 후 최대 1 영업일 이내 승인 완료",
+      Icon: () => (
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16,4 L26,8 L26,16 Q26,24 16,28 Q6,24 6,16 L6,8 Z" />
+          <polyline points="11,16 14.5,20 21,12" />
+        </svg>
+      ),
+    },
+    {
+      num: "03",
+      title: "타이어 장착",
+      desc: "전국 전문 장착점에서 당일 예약 가능, 숙련 기사가 직접 장착",
+      Icon: () => (
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="16" cy="16" r="11" />
+          <circle cx="16" cy="16" r="5" />
+          <line x1="16" y1="5" x2="16" y2="11" />
+          <line x1="16" y1="21" x2="16" y2="27" />
+          <line x1="5" y1="16" x2="11" y2="16" />
+          <line x1="21" y1="16" x2="27" y2="16" />
+        </svg>
+      ),
+    },
+    {
+      num: "04",
+      title: "렌탈 시작",
+      desc: "월 정액 납부로 타이어 걱정 없이 안전한 주행을 즐기세요",
+      Icon: () => (
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4,22 L4,14 L9,8 L28,8 L28,22" />
+          <circle cx="10" cy="23" r="3.5" />
+          <circle cx="22" cy="23" r="3.5" />
+          <line x1="13.5" y1="23" x2="18.5" y2="23" />
+          <line x1="4" y1="22" x2="28" y2="22" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <section
+      style={{
+        background: B.canvas,
+        borderBottom: `1px solid ${B.lightBorder}`,
+        padding: "56px 48px",
+      }}
+    >
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        {/* 섹션 헤더 */}
+        <div
+          style={{
+            borderTop: `4px solid ${B.accent}`,
+            paddingTop: 16,
+            marginBottom: 44,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: B.accent,
+              marginBottom: 4,
+            }}
+          >
+            RENTAL PROCESS
+          </div>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 800,
+              color: B.ink,
+              letterSpacing: "-0.5px",
+            }}
+          >
+            렌탈 서비스 이용 안내
+          </div>
+          <div
+            style={{
+              fontSize: 13,
+              color: B.muted,
+              marginTop: 4,
+            }}
+          >
+            간단한 4단계로 새 타이어를 부담 없이 시작하세요
+          </div>
+        </div>
+
+        {/* 스텝 그리드 */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 0,
+            position: "relative",
+          }}
+        >
+          {/* 연결선 */}
+          <div
+            style={{
+              position: "absolute",
+              top: 28,
+              left: "12.5%",
+              right: "12.5%",
+              height: 2,
+              background: `linear-gradient(to right, ${B.accent}, rgba(200,16,46,0.2))`,
+              zIndex: 0,
+            }}
+          />
+
+          {steps.map((step, idx) => (
+            <div
+              key={step.num}
+              style={{
+                position: "relative",
+                zIndex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: "0 12px",
+                textAlign: "center",
+              }}
+            >
+              {/* 아이콘 원형 */}
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  background: idx === 0 ? B.accent : B.canvas,
+                  border: `2px solid ${idx === 0 ? B.accent : B.lightBorderStrong}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: idx === 0 ? "#fff" : B.bodyText,
+                  marginBottom: 14,
+                  boxShadow: idx === 0
+                    ? "0 4px 16px rgba(200,16,46,0.25)"
+                    : "none",
+                }}
+              >
+                <step.Icon />
+              </div>
+
+              {/* 단계 번호 */}
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 800,
+                  letterSpacing: "0.1em",
+                  color: idx === 0 ? B.accent : B.muted,
+                  marginBottom: 4,
+                }}
+              >
+                STEP {step.num}
+              </div>
+
+              {/* 제목 */}
+              <div
+                style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: B.ink,
+                  marginBottom: 6,
+                  lineHeight: 1.2,
+                }}
+              >
+                {step.title}
+              </div>
+
+              {/* 설명 */}
+              <div
+                style={{
+                  fontSize: 11,
+                  color: B.muted,
+                  lineHeight: 1.6,
+                  wordBreak: "keep-all",
+                }}
+              >
+                {step.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 하단 강조 바 */}
+        <div
+          style={{
+            marginTop: 44,
+            background: B.accentSoft,
+            border: `1px solid rgba(200,16,46,0.2)`,
+            padding: "14px 24px",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 4,
+              height: 32,
+              background: B.accent,
+              flexShrink: 0,
+            }}
+          />
+          <div>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: B.accent,
+                marginBottom: 2,
+              }}
+            >
+              렌탈 혜택 안내
+            </div>
+            <div style={{ fontSize: 12, color: B.bodyText }}>
+              초기 비용 0원 · 월 정액 납부 · 계약 기간 중 무상 펑크 수리 포함 ·
+              만기 시 교체 또는 반납 선택 가능
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 // TechHighlights — 다크 유지 (시각적 리듬)
 // ═══════════════════════════════════════════════════════
 function TechHighlights({
@@ -3522,6 +3769,7 @@ export default function Page() {
           <Recommend content={content} onUpdate={updateContent} />
           <PerformanceSection content={content} onUpdate={updateContent} />
           <BrandValues content={content} onUpdate={updateContent} />
+          <RentalProcess />
           <TechHighlights content={content} onUpdate={updateContent} />
           <Footer content={content} />
         </div>
