@@ -800,9 +800,63 @@ function Hero({
         }}
       />
 
+      {/* 상단 설명 스트립 — 코너 브라켓 장식 */}
       <div
         style={{
-          marginTop: 52,
+          position: "relative",
+          width: "100%",
+          padding: "20px 48px",
+          textAlign: "center",
+          background: "rgba(255,255,255,0.03)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        {/* 코너 브라켓 ┐ 우상단 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 16,
+            width: 18,
+            height: 18,
+            borderTop: "1.5px solid rgba(255,255,255,0.3)",
+            borderRight: "1.5px solid rgba(255,255,255,0.3)",
+          }}
+        />
+        {/* 코너 브라켓 └ 좌하단 */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 10,
+            left: 16,
+            width: 18,
+            height: 18,
+            borderBottom: "1.5px solid rgba(255,255,255,0.3)",
+            borderLeft: "1.5px solid rgba(255,255,255,0.3)",
+          }}
+        />
+        <EditableText
+          value={content.description}
+          onChange={(v) => onUpdate({ description: v })}
+          multiline
+          block
+          style={{
+            fontSize: 13,
+            fontWeight: 300,
+            color: "rgba(255,255,255,0.65)",
+            fontStyle: "italic",
+            lineHeight: 1.75,
+            letterSpacing: "0.3px",
+            wordBreak: "keep-all",
+          }}
+          dark
+        />
+      </div>
+
+      {/* 브랜드명 */}
+      <div
+        style={{
+          marginTop: 28,
           fontSize: 11,
           fontWeight: 700,
           letterSpacing: "4px",
@@ -819,20 +873,22 @@ function Hero({
         />
       </div>
 
+      {/* 태그라인 — 모델명 바로 위, 크게 */}
       <div
         style={{
-          marginTop: 8,
-          fontSize: 14,
-          fontWeight: 300,
+          marginTop: 14,
+          fontSize: 20,
+          fontWeight: 500,
+          fontStyle: "italic",
           color: B.onDarkSoft,
           textAlign: "center",
-          letterSpacing: "0.5px",
+          letterSpacing: "0.02em",
         }}
       >
         <EditableText
           value={content.tagline}
           onChange={(v) => onUpdate({ tagline: v })}
-          style={{ fontSize: 14, fontWeight: 300 }}
+          style={{ fontSize: 20, fontWeight: 500, fontStyle: "italic" }}
           dark
         />
       </div>
