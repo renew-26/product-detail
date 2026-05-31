@@ -165,10 +165,30 @@ const defaultContent = {
   ],
 
   featureIcons: [
-    { id: 1, label: "제동력" },
-    { id: 2, label: "정숙성" },
-    { id: 3, label: "연비 효율성" },
-    { id: 4, label: "승차감" },
+    {
+      id: 1,
+      label: "제동력",
+      description: "뛰어난 제동 성능으로 안전한 주행을 보장합니다.",
+      image: null as string | null,
+    },
+    {
+      id: 2,
+      label: "정숙성",
+      description: "저소음 패턴 설계로 조용하고 쾌적한 승차감을 제공합니다.",
+      image: null as string | null,
+    },
+    {
+      id: 3,
+      label: "연비 효율성",
+      description: "구름 저항 최소화로 연료 소비를 줄여줍니다.",
+      image: null as string | null,
+    },
+    {
+      id: 4,
+      label: "승차감",
+      description: "최적화된 컴파운드로 부드럽고 안정적인 주행감을 선사합니다.",
+      image: null as string | null,
+    },
   ],
 
   brandValues: [
@@ -177,24 +197,28 @@ const defaultContent = {
       title: "정직한 가격",
       description:
         "온라인과 오프라인 모두 동일한 가격으로 신뢰할 수 있는 구매 환경을 제공합니다.",
+      image: null as string | null,
     },
     {
       id: 2,
       title: "신속한 장착",
       description:
         "주문부터 장착까지 빠르게 진행되어 고객님의 소중한 시간을 아껴드립니다.",
+      image: null as string | null,
     },
     {
       id: 3,
       title: "안심 품질 보증",
       description:
         "모든 타이어는 철저한 검수와 품질 관리를 거쳐 최고 수준의 성능을 보장합니다.",
+      image: null as string | null,
     },
     {
       id: 4,
       title: "전문가 상담",
       description:
         "10년 이상 경력의 타이어 전문가가 차량에 꼭 맞는 제품을 안내해드립니다.",
+      image: null as string | null,
     },
   ],
 };
@@ -315,6 +339,8 @@ function ImageSlot({
   aspectRatio = "16/9",
   label = "이미지 업로드",
   dark = false,
+  fallback,
+  objectFit = "cover",
 }: {
   src: string | null;
   onUpload: (src: string) => void;
@@ -322,6 +348,8 @@ function ImageSlot({
   aspectRatio?: string;
   label?: string;
   dark?: boolean;
+  fallback?: React.ReactNode;
+  objectFit?: "cover" | "contain";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -366,10 +394,91 @@ function ImageSlot({
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit,
               display: "block",
             }}
           />
+          <div
+            className="export-ignore"
+            style={{
+              position: "absolute",
+              top: 6,
+              right: 6,
+              display: "flex",
+              gap: 4,
+            }}
+          >
+            <button
+              onClick={() => inputRef.current?.click()}
+              style={{
+                background: "rgba(0,0,0,0.55)",
+                border: "none",
+                borderRadius: 4,
+                color: "#fff",
+                fontSize: 11,
+                padding: "3px 7px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <Upload size={11} /> 교체
+            </button>
+            <button
+              onClick={onRemove}
+              style={{
+                background: "rgba(0,0,0,0.55)",
+                border: "none",
+                borderRadius: 4,
+                color: "#fff",
+                padding: "3px 5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Trash2 size={11} />
+            </button>
+          </div>
+        </>
+      ) : fallback ? (
+        <>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {fallback}
+          </div>
+          <div
+            className="export-ignore"
+            style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", opacity: 0 }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0")}
+          >
+            <button
+              onClick={() => inputRef.current?.click()}
+              style={{
+                background: "rgba(0,0,0,0.6)",
+                border: "none",
+                borderRadius: 4,
+                color: "#fff",
+                fontSize: 10,
+                padding: "3px 7px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+              }}
+            >
+              <Upload size={10} /> 업로드
+            </button>
+          </div>
         </>
       ) : (
         <button
@@ -1353,6 +1462,320 @@ function KeySpecs({
 }
 
 // ═══════════════════════════════════════════════════════
+// CoreSpecs — 핵심 성능 소개 (라이트, 2컬럼)
+// ═══════════════════════════════════════════════════════
+function CoreSpecs({
+  content,
+  onUpdate,
+}: {
+  content: Content;
+  onUpdate: (p: Partial<Content>) => void;
+}) {
+  // 스펙 라벨에 맞는 SVG 아이콘
+  const specIcons: Record<string, React.ReactNode> = {
+    차량: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="1" y="9" width="22" height="8" rx="2" />
+        <path d="M5 9V7a2 2 0 012-2h10a2 2 0 012 2v2" />
+        <circle cx="6.5" cy="17.5" r="1.5" fill="#C8102E" stroke="none" />
+        <circle cx="17.5" cy="17.5" r="1.5" fill="#C8102E" stroke="none" />
+      </svg>
+    ),
+    계절: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <line x1="12" y1="2" x2="12" y2="5" />
+        <line x1="12" y1="19" x2="12" y2="22" />
+        <line x1="2" y1="12" x2="5" y2="12" />
+        <line x1="19" y1="12" x2="22" y2="12" />
+        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
+      </svg>
+    ),
+    특장점: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z" />
+        <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" />
+      </svg>
+    ),
+    하중: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+        <path d="M2 17l10 5 10-5" />
+        <path d="M2 12l10 5 10-5" />
+      </svg>
+    ),
+    속도: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 2a10 10 0 00-6.88 17.17" />
+        <path d="M12 2a10 10 0 016.88 17.17" />
+        <line x1="12" y1="12" x2="15.5" y2="8" />
+        <circle cx="12" cy="12" r="1.5" fill="#C8102E" stroke="none" />
+      </svg>
+    ),
+    마모: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="3" />
+        <line x1="12" y1="3" x2="12" y2="9" />
+        <line x1="12" y1="15" x2="12" y2="21" />
+        <line x1="3" y1="12" x2="9" y2="12" />
+        <line x1="15" y1="12" x2="21" y2="12" />
+      </svg>
+    ),
+    회전: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="23 4 23 10 17 10" />
+        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
+      </svg>
+    ),
+    default: (
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="#C8102E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    ),
+  };
+
+  const getIcon = (label: string) => {
+    const key = Object.keys(specIcons).find(
+      (k) => k !== "default" && label.includes(k),
+    );
+    return specIcons[key ?? "default"];
+  };
+
+  return (
+    <section
+      style={{
+        background: "#f4f4f4",
+        padding: "56px 32px",
+        borderBottom: `1px solid ${B.lightBorder}`,
+      }}
+    >
+      <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        {/* 헤더 */}
+        <div style={{ marginBottom: 36 }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: B.ink,
+              color: "#fff",
+              borderRadius: 4,
+              padding: "4px 10px",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.5px",
+              marginBottom: 14,
+            }}
+          >
+            <svg
+              viewBox="0 0 16 16"
+              width="11"
+              height="11"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="3,8 6.5,12 13,5" />
+            </svg>
+            구매 전 필수 확인
+          </div>
+          <h2
+            style={{
+              fontSize: 28,
+              fontWeight: 900,
+              color: B.ink,
+              margin: 0,
+              letterSpacing: "-0.8px",
+              lineHeight: 1.1,
+            }}
+          >
+            핵심 성능을
+            <br />
+            <span style={{ color: B.accent }}>한눈에!</span>
+          </h2>
+        </div>
+
+        {/* 2컬럼: 스펙 리스트 + 타이어 이미지 */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 24,
+            alignItems: "center",
+          }}
+        >
+          {/* 왼쪽: 스펙 목록 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {content.keySpecs.map((spec, idx) => (
+              <div
+                key={spec.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  background: "#fff",
+                  borderRadius: 10,
+                  padding: "12px 16px",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                }}
+              >
+                {/* 원형 아이콘 */}
+                <div
+                  style={{
+                    flexShrink: 0,
+                    width: 44,
+                    height: 44,
+                    borderRadius: "50%",
+                    background: "rgba(200,16,46,0.07)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {getIcon(spec.label)}
+                </div>
+                {/* 라벨 + 값 */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: B.muted,
+                      letterSpacing: "0.5px",
+                      marginBottom: 2,
+                    }}
+                  >
+                    <EditableText
+                      value={spec.label}
+                      onChange={(v) => {
+                        const a = [...content.keySpecs];
+                        a[idx] = { ...spec, label: v };
+                        onUpdate({ keySpecs: a });
+                      }}
+                      style={{ fontSize: 11, fontWeight: 700, color: B.muted }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: B.ink,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    <EditableText
+                      value={spec.value}
+                      onChange={(v) => {
+                        const a = [...content.keySpecs];
+                        a[idx] = { ...spec, value: v };
+                        onUpdate({ keySpecs: a });
+                      }}
+                      style={{ fontSize: 14, fontWeight: 600, color: B.ink }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 오른쪽: 타이어 이미지 */}
+          <div style={{ position: "sticky", top: 24 }}>
+            <ImageSlot
+              src={content.productImage || content.heroImage}
+              onUpload={(src) => onUpdate({ productImage: src })}
+              onRemove={() => onUpdate({ productImage: null })}
+              aspectRatio="4/5"
+              label="타이어 이미지"
+              objectFit="contain"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 // FeatureIcons — 2×2 기능 아이콘 그리드
 // ═══════════════════════════════════════════════════════
 function FeatureIcons({
@@ -1426,12 +1849,26 @@ function FeatureIcons({
                     height: 60,
                     borderRadius: "50%",
                     border: `2px solid ${B.lightBorderStrong}`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    overflow: "hidden",
+                    flexShrink: 0,
                   }}
                 >
-                  <Icon color={B.ink} />
+                  <ImageSlot
+                    src={feat.image}
+                    onUpload={(src) => {
+                      const a = [...content.featureIcons];
+                      a[idx] = { ...feat, image: src };
+                      onUpdate({ featureIcons: a });
+                    }}
+                    onRemove={() => {
+                      const a = [...content.featureIcons];
+                      a[idx] = { ...feat, image: null };
+                      onUpdate({ featureIcons: a });
+                    }}
+                    aspectRatio="1/1"
+                    label=""
+                    fallback={<Icon color={B.ink} />}
+                  />
                 </div>
                 <span
                   style={{
@@ -1549,12 +1986,25 @@ function BrandValues({
                     flexShrink: 0,
                     background: "rgba(245,158,11,0.12)",
                     border: "1px solid rgba(245,158,11,0.25)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    overflow: "hidden",
                   }}
                 >
-                  <Icon color={iconAccent} />
+                  <ImageSlot
+                    src={val.image}
+                    onUpload={(src) => {
+                      const a = [...content.brandValues];
+                      a[idx] = { ...val, image: src };
+                      onUpdate({ brandValues: a });
+                    }}
+                    onRemove={() => {
+                      const a = [...content.brandValues];
+                      a[idx] = { ...val, image: null };
+                      onUpdate({ brandValues: a });
+                    }}
+                    aspectRatio="1/1"
+                    label=""
+                    fallback={<Icon color={iconAccent} />}
+                  />
                 </div>
                 <div>
                   <div
@@ -1609,6 +2059,650 @@ function BrandValues({
 
 // ═══════════════════════════════════════════════════════
 // ProductSummary — 라이트 테마, 가격 제거
+// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// TireStory — 타이어 상세 설명 (4블록 순차 스토리)
+// ═══════════════════════════════════════════════════════
+function TireStory({
+  content,
+  onUpdate,
+}: {
+  content: Content;
+  onUpdate: (p: Partial<Content>) => void;
+}) {
+  const iconComponents = [IconBraking, IconQuiet, IconEfficiency, IconComfort];
+
+  // ── 레이더 차트 (SVG 오각형) ──────────────────────────
+  const radarSize = 220;
+  const cx = radarSize / 2;
+  const cy = radarSize / 2;
+  const maxR = 88;
+  const levels = 4;
+  const angleStep = (Math.PI * 2) / 5;
+  const startAngle = -Math.PI / 2;
+
+  const toXY = (angle: number, r: number) => ({
+    x: cx + r * Math.cos(angle),
+    y: cy + r * Math.sin(angle),
+  });
+
+  const polygonPoints = (r: number) =>
+    Array.from({ length: 5 }, (_, i) => {
+      const p = toXY(startAngle + i * angleStep, r);
+      return `${p.x},${p.y}`;
+    }).join(" ");
+
+  const dataPoints = content.performance.map((m, i) => {
+    const r = (m.value / 5) * maxR;
+    return toXY(startAngle + i * angleStep, r);
+  });
+  const dataPolygon = dataPoints.map((p) => `${p.x},${p.y}`).join(" ");
+
+  return (
+    <>
+      {/* ── Block 1: 포스터 소개 ───────────────────────── */}
+      <section
+        style={{
+          background: B.canvas,
+          padding: "60px 32px 0",
+          borderBottom: "none",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ maxWidth: 520, margin: "0 auto" }}>
+          {/* 브랜드명 */}
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "3px",
+              color: B.muted,
+              textTransform: "uppercase",
+              marginBottom: 16,
+            }}
+          >
+            <EditableText
+              value={content.brand}
+              onChange={(v) => onUpdate({ brand: v })}
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: B.muted,
+                letterSpacing: "3px",
+              }}
+            />
+          </div>
+
+          {/* 대표 헤드라인 */}
+          <h2
+            style={{
+              fontSize: 28,
+              fontWeight: 900,
+              color: B.ink,
+              margin: "0 0 14px",
+              lineHeight: 1.2,
+              letterSpacing: "-0.8px",
+            }}
+          >
+            <EditableText
+              value={content.tagline}
+              onChange={(v) => onUpdate({ tagline: v })}
+              block
+              style={{ fontSize: 28, fontWeight: 900, color: B.ink }}
+            />
+          </h2>
+
+          {/* 서브 설명 */}
+          <p
+            style={{
+              fontSize: 14,
+              color: B.bodyText,
+              lineHeight: 1.7,
+              margin: "0 0 20px",
+              fontWeight: 300,
+            }}
+          >
+            <EditableText
+              value={content.description}
+              onChange={(v) => onUpdate({ description: v })}
+              multiline
+              block
+              style={{ fontSize: 14, color: B.bodyText }}
+            />
+          </p>
+
+          {/* 카테고리 배지 */}
+          <div
+            style={{
+              display: "inline-block",
+              background: B.accent,
+              color: "#fff",
+              borderRadius: 24,
+              padding: "8px 22px",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.5px",
+              marginBottom: 32,
+            }}
+          >
+            <EditableText
+              value={content.category}
+              onChange={(v) => onUpdate({ category: v })}
+              style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}
+            />
+          </div>
+
+          {/* 타이어 이미지 */}
+          <div style={{ margin: "0 -32px" }}>
+            <ImageSlot
+              src={content.productImage || content.heroImage}
+              onUpload={(src) => onUpdate({ productImage: src })}
+              onRemove={() => onUpdate({ productImage: null })}
+              aspectRatio="4/3"
+              label="타이어 이미지"
+              objectFit="contain"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Block 2: 피처 아이콘 그리드 ────────────────── */}
+      <section
+        style={{
+          background: B.canvas,
+          borderBottom: `1px solid ${B.lightBorder}`,
+        }}
+      >
+        {/* 다크 헤더 */}
+        <div
+          style={{
+            background: B.ink,
+            padding: "36px 32px",
+            textAlign: "left",
+          }}
+        >
+          <div style={{ maxWidth: 520, margin: "0 auto" }}>
+            <p
+              style={{
+                fontSize: 16,
+                fontWeight: 300,
+                color: "rgba(255,255,255,0.65)",
+                margin: "0 0 6px",
+                fontStyle: "italic",
+              }}
+            >
+              믿을 수 있는 품질과 성능의
+            </p>
+            <h3
+              style={{
+                fontSize: 30,
+                fontWeight: 900,
+                color: "#fff",
+                margin: 0,
+                letterSpacing: "-0.5px",
+              }}
+            >
+              <EditableText
+                value={content.modelName}
+                onChange={(v) => onUpdate({ modelName: v })}
+                block
+                style={{ fontSize: 30, fontWeight: 900, color: "#fff" }}
+                dark
+              />
+            </h3>
+          </div>
+        </div>
+
+        {/* 2×2 피처 그리드 */}
+        <div style={{ padding: "40px 32px 0" }}>
+          <div
+            style={{
+              maxWidth: 520,
+              margin: "0 auto",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+            }}
+          >
+            {content.featureIcons.map((feat, idx) => {
+              const Icon = iconComponents[idx % 4];
+              const isRight = idx % 2 === 1;
+              const isBottom = idx >= 2;
+              return (
+                <div
+                  key={feat.id}
+                  style={{
+                    padding: "24px 20px",
+                    borderRight: isRight
+                      ? "none"
+                      : `1px solid ${B.lightBorder}`,
+                    borderBottom: isBottom
+                      ? "none"
+                      : `1px solid ${B.lightBorder}`,
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 14,
+                  }}
+                >
+                  {/* 아이콘 원 */}
+                  <div
+                    style={{
+                      flexShrink: 0,
+                      width: 52,
+                      height: 52,
+                      borderRadius: "50%",
+                      border: `1.5px solid ${B.lightBorderStrong}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon color={B.muted} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 700,
+                        color: B.ink,
+                        marginBottom: 4,
+                      }}
+                    >
+                      <EditableText
+                        value={feat.label}
+                        onChange={(v) => {
+                          const a = [...content.featureIcons];
+                          a[idx] = { ...feat, label: v };
+                          onUpdate({ featureIcons: a });
+                        }}
+                        style={{ fontSize: 15, fontWeight: 700, color: B.ink }}
+                      />
+                    </div>
+                    <div
+                      style={{ fontSize: 12, color: B.muted, lineHeight: 1.5 }}
+                    >
+                      <EditableText
+                        value={feat.description}
+                        onChange={(v) => {
+                          const a = [...content.featureIcons];
+                          a[idx] = { ...feat, description: v };
+                          onUpdate({ featureIcons: a });
+                        }}
+                        multiline
+                        block
+                        style={{ fontSize: 12, color: B.muted }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 하단 다크 배너 */}
+        <div
+          style={{
+            background: B.ink,
+            padding: "20px 32px",
+            textAlign: "center",
+            marginTop: 40,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#fff",
+              margin: 0,
+              letterSpacing: "-0.3px",
+            }}
+          >
+            안전성, 쾌적함, 경제성까지&nbsp;
+            <span style={{ color: B.accent }}>모두 갖춘 스마트한 선택!</span>
+          </p>
+        </div>
+      </section>
+
+      {/* ── Block 3: 레이더 차트 ───────────────────────── */}
+      <section
+        style={{
+          background: "#ebebeb",
+          borderBottom: `1px solid ${B.lightBorder}`,
+        }}
+      >
+        {/* 헤더 */}
+        <div style={{ textAlign: "center", padding: "48px 32px 32px" }}>
+          <div
+            style={{
+              display: "inline-block",
+              background: B.ink,
+              color: "#fff",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "1px",
+              padding: "5px 14px",
+              borderRadius: 2,
+              marginBottom: 8,
+            }}
+          >
+            타이어 성능 퍼포먼스
+          </div>
+          <div style={{ fontSize: 22, color: B.ink, margin: "4px 0 0" }}>▼</div>
+          <h3
+            style={{
+              fontSize: 26,
+              fontWeight: 900,
+              color: B.ink,
+              margin: "8px 0 0",
+              letterSpacing: "-0.5px",
+              fontStyle: "italic",
+            }}
+          >
+            "주요 성능 한눈에 보기"
+          </h3>
+          <div
+            style={{
+              width: 48,
+              height: 2,
+              background: B.lightBorderStrong,
+              margin: "16px auto 0",
+            }}
+          />
+        </div>
+
+        {/* SVG 오각형 레이더 */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            padding: "0 32px 8px",
+          }}
+        >
+          <svg
+            width={radarSize}
+            height={radarSize}
+            viewBox={`0 0 ${radarSize} ${radarSize}`}
+          >
+            {/* 배경 동심 오각형 */}
+            {Array.from({ length: levels }, (_, l) => {
+              const r = (maxR * (l + 1)) / levels;
+              return (
+                <polygon
+                  key={l}
+                  points={polygonPoints(r)}
+                  fill={l === levels - 1 ? "#d8d8d8" : "none"}
+                  stroke="#c0c0c0"
+                  strokeWidth="1"
+                />
+              );
+            })}
+            {/* 축 선 */}
+            {content.performance.map((_, i) => {
+              const outer = toXY(startAngle + i * angleStep, maxR);
+              return (
+                <line
+                  key={i}
+                  x1={cx}
+                  y1={cy}
+                  x2={outer.x}
+                  y2={outer.y}
+                  stroke="#b0b0b0"
+                  strokeWidth="1"
+                />
+              );
+            })}
+            {/* 데이터 다각형 */}
+            <polygon
+              points={dataPolygon}
+              fill="rgba(0,0,0,0.15)"
+              stroke={B.ink}
+              strokeWidth="1.8"
+            />
+            {/* 꼭짓점 원 */}
+            {dataPoints.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r="4" fill={B.ink} />
+            ))}
+            {/* 레이블 */}
+            {content.performance.map((m, i) => {
+              const labelR = maxR + 20;
+              const lp = toXY(startAngle + i * angleStep, labelR);
+              return (
+                <g key={i}>
+                  <text
+                    x={lp.x}
+                    y={lp.y}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize="11"
+                    fontWeight="700"
+                    fill={B.ink}
+                    fontFamily="Pretendard, sans-serif"
+                  >
+                    {m.label}
+                  </text>
+                  <text
+                    x={lp.x}
+                    y={lp.y + 14}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize="10"
+                    fill={B.muted}
+                    fontFamily="Pretendard, sans-serif"
+                  >
+                    ({m.value.toFixed(1)})
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* 하단 다크 배너 (코너 브라켓) */}
+        <div
+          style={{
+            background: B.ink,
+            margin: "8px 32px 0",
+            padding: "20px 32px",
+            position: "relative",
+            textAlign: "center",
+          }}
+        >
+          {/* 코너 브라켓 ┌ */}
+          <div
+            style={{
+              position: "absolute",
+              top: 10,
+              left: 14,
+              width: 16,
+              height: 16,
+              borderTop: "1.5px solid rgba(255,255,255,0.3)",
+              borderLeft: "1.5px solid rgba(255,255,255,0.3)",
+            }}
+          />
+          {/* 코너 브라켓 ┘ */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 10,
+              right: 14,
+              width: 16,
+              height: 16,
+              borderBottom: "1.5px solid rgba(255,255,255,0.3)",
+              borderRight: "1.5px solid rgba(255,255,255,0.3)",
+            }}
+          />
+          <p
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.8)",
+              margin: 0,
+              lineHeight: 1.6,
+              letterSpacing: "0.3px",
+            }}
+          >
+            테스트 결과가 입증하는
+            <br />
+            <span style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>
+              <EditableText
+                value={content.modelName}
+                onChange={(v) => onUpdate({ modelName: v })}
+                style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}
+                dark
+              />
+              만의 균형 잡힌 퍼포먼스!
+            </span>
+          </p>
+        </div>
+        <div style={{ height: 48 }} />
+      </section>
+
+      {/* ── Block 4: 기술 체크포인트 ──────────────────── */}
+      <section
+        style={{
+          background: B.canvasSoft,
+          padding: "52px 32px",
+          borderBottom: `1px solid ${B.lightBorder}`,
+        }}
+      >
+        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
+          {/* 상단 레이블 */}
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 800,
+              color: B.accent,
+              letterSpacing: "1px",
+              marginBottom: 10,
+            }}
+          >
+            체크포인트
+          </div>
+          <h3
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: B.ink,
+              margin: "0 0 32px",
+              lineHeight: 1.3,
+              letterSpacing: "-0.5px",
+            }}
+          >
+            더욱 향상된 타이어 기술을
+            <br />
+            확인해보세요!
+          </h3>
+
+          {/* 체크포인트 아이템 목록 */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 24,
+              textAlign: "left",
+            }}
+          >
+            {content.checkpoints.map((cp, idx) => (
+              <div
+                key={cp.id}
+                style={{
+                  background: "#fff",
+                  borderRadius: 12,
+                  padding: "20px 20px 20px 24px",
+                  boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+                  display: "flex",
+                  gap: 16,
+                  alignItems: "flex-start",
+                }}
+              >
+                {/* 이미지 업로드 슬롯 */}
+                <div
+                  style={{
+                    flexShrink: 0,
+                    width: 64,
+                    height: 64,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                  }}
+                >
+                  <ImageSlot
+                    src={cp.image}
+                    onUpload={(src) => {
+                      const a = [...content.checkpoints];
+                      a[idx] = { ...cp, image: src };
+                      onUpdate({ checkpoints: a });
+                    }}
+                    onRemove={() => {
+                      const a = [...content.checkpoints];
+                      a[idx] = { ...cp, image: null };
+                      onUpdate({ checkpoints: a });
+                    }}
+                    aspectRatio="1/1"
+                    label="아이콘"
+                  />
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  {/* POINT 번호 */}
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 800,
+                      color: B.accent,
+                      letterSpacing: "1px",
+                      marginBottom: 4,
+                    }}
+                  >
+                    POINT {cp.number}
+                  </div>
+                  {/* 제목 */}
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: B.ink,
+                      marginBottom: 6,
+                      letterSpacing: "-0.3px",
+                    }}
+                  >
+                    <EditableText
+                      value={cp.title}
+                      onChange={(v) => {
+                        const a = [...content.checkpoints];
+                        a[idx] = { ...cp, title: v };
+                        onUpdate({ checkpoints: a });
+                      }}
+                      style={{ fontSize: 15, fontWeight: 700, color: B.ink }}
+                    />
+                  </div>
+                  {/* 설명 */}
+                  <div
+                    style={{ fontSize: 12, color: B.bodyText, lineHeight: 1.6 }}
+                  >
+                    <EditableText
+                      value={cp.description}
+                      onChange={(v) => {
+                        const a = [...content.checkpoints];
+                        a[idx] = { ...cp, description: v };
+                        onUpdate({ checkpoints: a });
+                      }}
+                      multiline
+                      block
+                      style={{ fontSize: 12, color: B.bodyText }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// ProductSummary — 기존 (렌더에서 제거됨)
 // ═══════════════════════════════════════════════════════
 function ProductSummary({
   content,
@@ -2240,7 +3334,16 @@ function RentalProcess() {
       title: "상담 신청",
       desc: "원하는 타이어를 선택하고 온라인 또는 전화로 렌탈 신청",
       Icon: () => (
-        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 32 32"
+          width="28"
+          height="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <rect x="4" y="6" width="24" height="20" rx="2" />
           <polyline points="4,12 16,19 28,12" />
         </svg>
@@ -2251,7 +3354,16 @@ function RentalProcess() {
       title: "심사 & 승인",
       desc: "간단한 신용 심사 후 최대 1 영업일 이내 승인 완료",
       Icon: () => (
-        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 32 32"
+          width="28"
+          height="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M16,4 L26,8 L26,16 Q26,24 16,28 Q6,24 6,16 L6,8 Z" />
           <polyline points="11,16 14.5,20 21,12" />
         </svg>
@@ -2262,7 +3374,16 @@ function RentalProcess() {
       title: "타이어 장착",
       desc: "전국 전문 장착점에서 당일 예약 가능, 숙련 기사가 직접 장착",
       Icon: () => (
-        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 32 32"
+          width="28"
+          height="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="16" cy="16" r="11" />
           <circle cx="16" cy="16" r="5" />
           <line x1="16" y1="5" x2="16" y2="11" />
@@ -2277,7 +3398,16 @@ function RentalProcess() {
       title: "렌탈 시작",
       desc: "월 정액 납부로 타이어 걱정 없이 안전한 주행을 즐기세요",
       Icon: () => (
-        <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 32 32"
+          width="28"
+          height="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M4,22 L4,14 L9,8 L28,8 L28,22" />
           <circle cx="10" cy="23" r="3.5" />
           <circle cx="22" cy="23" r="3.5" />
@@ -2386,9 +3516,8 @@ function RentalProcess() {
                   justifyContent: "center",
                   color: idx === 0 ? "#fff" : B.bodyText,
                   marginBottom: 14,
-                  boxShadow: idx === 0
-                    ? "0 4px 16px rgba(200,16,46,0.25)"
-                    : "none",
+                  boxShadow:
+                    idx === 0 ? "0 4px 16px rgba(200,16,46,0.25)" : "none",
                 }}
               >
                 <step.Icon />
@@ -3089,37 +4218,6 @@ function CTA({ content }: { content: Content }) {
 }
 
 // ═══════════════════════════════════════════════════════
-// Footer
-// ═══════════════════════════════════════════════════════
-function Footer({ content }: { content: Content }) {
-  return (
-    <footer
-      style={{
-        background: B.canvasSoft,
-        padding: "32px 48px",
-        borderTop: `1px solid ${B.lightBorder}`,
-        textAlign: "center",
-      }}
-    >
-      <div
-        style={{
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: "3px",
-          color: B.muted,
-          marginBottom: 6,
-        }}
-      >
-        {content.brand}
-      </div>
-      <div style={{ fontSize: 11, color: "#c0c0c0" }}>
-        © 2026 {content.brand}. All rights reserved.
-      </div>
-    </footer>
-  );
-}
-
-// ═══════════════════════════════════════════════════════
 // SidebarPanel — 편집 패널 (좌측 고정)
 // ═══════════════════════════════════════════════════════
 function SidebarPanel({
@@ -3785,16 +4883,10 @@ export default function Page() {
           }}
         >
           <Hero content={content} onUpdate={updateContent} />
-          <ProductClassification content={content} onUpdate={updateContent} />
-          <KeySpecs content={content} onUpdate={updateContent} />
-          <ProductSummary content={content} onUpdate={updateContent} />
-          <FeatureIcons content={content} onUpdate={updateContent} />
-          <Recommend content={content} onUpdate={updateContent} />
-          <PerformanceSection content={content} onUpdate={updateContent} />
+          <CoreSpecs content={content} onUpdate={updateContent} />
+          <TireStory content={content} onUpdate={updateContent} />
           <BrandValues content={content} onUpdate={updateContent} />
           <RentalProcess />
-          <TechHighlights content={content} onUpdate={updateContent} />
-          <Footer content={content} />
         </div>
       </div>
     </div>
