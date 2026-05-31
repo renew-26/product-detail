@@ -981,50 +981,17 @@ function Hero({
         </div>
       </div>
 
-      {/* 카테고리 배지만 표시 (가격 제거) */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 4,
-          marginTop: -16,
-          marginBottom: 36,
-        }}
-      >
-        <div
-          style={{
-            background: B.accentSoft,
-            border: `1px solid ${B.accent}`,
-            padding: "5px 16px",
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "1.5px",
-            color: B.accent,
-            textTransform: "uppercase",
-          }}
-        >
-          <EditableText
-            value={content.category}
-            onChange={(v) => onUpdate({ category: v })}
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "1.5px",
-              color: B.accent,
-            }}
-            dark
-          />
-        </div>
-      </div>
-
+      {/* 스튜디오 플로어 조명 효과 — 타이어가 바닥에 놓인 것처럼 */}
       <div
         style={{
           position: "absolute",
           bottom: 0,
-          left: 0,
-          right: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80%",
           height: 80,
           background:
-            "linear-gradient(to top, #f7f7f7 0%, rgba(247,247,247,0) 100%)",
+            "radial-gradient(ellipse 100% 100% at 50% 100%, rgba(200,16,46,0.12) 0%, rgba(60,60,60,0.18) 40%, transparent 70%)",
           pointerEvents: "none",
           zIndex: 3,
         }}
