@@ -1,6 +1,20 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
+ * html2canvas 익스포트 대응
+ * Tailwind preflight가 img를 display:block 으로 설정하는데,
+ * html2canvas 렌더링 시 이 block이 의도치 않은 줄바꿈/여백으로
+ * 잡힌다. inline-block + vertical-align:bottom 으로 baseline
+ * 하단 여백까지 제거한다.
+ * ═══════════════════════════════════════════════════════ */
+@layer base {
+  img {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
  * Pretendard Font Face
  * ═══════════════════════════════════════════════════════ */
 @font-face {
