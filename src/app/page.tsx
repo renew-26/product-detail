@@ -4218,6 +4218,104 @@ function CTA({ content }: { content: Content }) {
 }
 
 // ═══════════════════════════════════════════════════════
+// PanelImage — 편집 패널 내부 컴팩트 이미지 업로더
+// ImageSlot은 프리뷰 인라인용(넓은 영역), PanelImage는 패널용(썸네일 + 버튼).
+// ═══════════════════════════════════════════════════════
+function PanelImage({
+  src,
+  onUpload,
+  onRemove,
+  label,
+}: {
+  src: string | null;
+  onUpload: (src: string) => void;
+  onRemove: () => void;
+  label?: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => onUpload(ev.target?.result as string);
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+  const miniBtn: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: 3,
+    height: 24,
+    padding: "0 8px",
+    fontSize: 10,
+    fontWeight: 600,
+    color: "#666",
+    background: "#fff",
+    border: "1px solid #e8e8e8",
+    borderRadius: 4,
+    cursor: "pointer",
+  };
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleChange}
+        style={{ display: "none" }}
+      />
+      <div
+        onClick={() => inputRef.current?.click()}
+        style={{
+          width: 44,
+          height: 44,
+          flexShrink: 0,
+          borderRadius: 6,
+          cursor: "pointer",
+          border: "1px solid #e8e8e8",
+          background: "#f7f7f7",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <ImageIcon size={16} color="#ccc" />
+        )}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {label && (
+          <div style={{ fontSize: 10, color: "#999", marginBottom: 4 }}>
+            {label}
+          </div>
+        )}
+        <div style={{ display: "flex", gap: 5 }}>
+          <button onClick={() => inputRef.current?.click()} style={miniBtn}>
+            <Upload size={10} /> {src ? "교체" : "업로드"}
+          </button>
+          {src && (
+            <button
+              onClick={onRemove}
+              style={{ ...miniBtn, padding: "0 6px", color: "#c0392b" }}
+            >
+              <Trash2 size={10} />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 // SidebarPanel — 편집 패널 (좌측 고정)
 // ═══════════════════════════════════════════════════════
 function SidebarPanel({
@@ -4418,6 +4516,25 @@ function SidebarPanel({
           </div>
         </div>
 
+        {/* 대표 이미지 */}
+        <div style={sec}>
+          <div style={secTitle}>대표 이미지</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <PanelImage
+              label="히어로 이미지"
+              src={content.heroImage}
+              onUpload={(src) => onUpdate({ heroImage: src })}
+              onRemove={() => onUpdate({ heroImage: null })}
+            />
+            <PanelImage
+              label="제품 이미지"
+              src={content.productImage}
+              onUpload={(src) => onUpdate({ productImage: src })}
+              onRemove={() => onUpdate({ productImage: null })}
+            />
+          </div>
+        </div>
+
         {/* 분류 */}
         <div style={sec}>
           <div style={secTitle}>분류</div>
@@ -4467,6 +4584,84 @@ function SidebarPanel({
           </div>
         </div>
 
+        {/* 빠른 스펙 (배지) */}
+        <div style={sec}>
+          <div style={secTitle}>빠른 스펙 (배지)</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {content.quickSpecs.map((qs, idx) => (
+              <div
+                key={qs.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "64px 1fr 26px",
+                  gap: 5,
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  style={{ ...inp, fontSize: 11, fontWeight: 700 }}
+                  placeholder="코드"
+                  value={qs.code}
+                  onChange={(e) => {
+                    const a = [...content.quickSpecs];
+                    a[idx] = { ...qs, code: e.target.value };
+                    onUpdate({ quickSpecs: a });
+                  }}
+                />
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  placeholder="설명"
+                  value={qs.label}
+                  onChange={(e) => {
+                    const a = [...content.quickSpecs];
+                    a[idx] = { ...qs, label: e.target.value };
+                    onUpdate({ quickSpecs: a });
+                  }}
+                />
+                <button
+                  style={{
+                    width: 26,
+                    height: 26,
+                    background: "transparent",
+                    border: "1px solid #e8e8e8",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    color: "#bbb",
+                    fontSize: 11,
+                  }}
+                  onClick={() =>
+                    onUpdate({
+                      quickSpecs: content.quickSpecs.filter((_, i) => i !== idx),
+                    })
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              style={{
+                ...inp,
+                background: "#f7f7f7",
+                cursor: "pointer",
+                textAlign: "center" as const,
+                color: "#888",
+                border: "1px dashed #ddd",
+              }}
+              onClick={() =>
+                onUpdate({
+                  quickSpecs: [
+                    ...content.quickSpecs,
+                    { id: Date.now(), code: "NEW", label: "새 항목" },
+                  ],
+                })
+              }
+            >
+              + 배지 추가
+            </button>
+          </div>
+        </div>
+
         {/* 핵심 스펙 */}
         <div style={sec}>
           <div style={secTitle}>핵심 스펙</div>
@@ -4508,19 +4703,63 @@ function SidebarPanel({
         {/* 기능 아이콘 */}
         <div style={sec}>
           <div style={secTitle}>기능 아이콘 (2×2)</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {content.featureIcons.map((feat, idx) => (
-              <input
+              <div
                 key={feat.id}
-                style={inp}
-                placeholder={`아이콘 ${idx + 1} 이름`}
-                value={feat.label}
-                onChange={(e) => {
-                  const a = [...content.featureIcons];
-                  a[idx] = { ...feat, label: e.target.value };
-                  onUpdate({ featureIcons: a });
+                style={{
+                  paddingBottom: 12,
+                  borderBottom:
+                    idx < content.featureIcons.length - 1
+                      ? "1px dashed #f0f0f0"
+                      : "none",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
                 }}
-              />
+              >
+                <label style={{ ...lbl, marginBottom: 0 }}>
+                  아이콘 {idx + 1}
+                </label>
+                <input
+                  style={{ ...inp, fontWeight: 700 }}
+                  placeholder="이름"
+                  value={feat.label}
+                  onChange={(e) => {
+                    const a = [...content.featureIcons];
+                    a[idx] = { ...feat, label: e.target.value };
+                    onUpdate({ featureIcons: a });
+                  }}
+                />
+                <textarea
+                  style={{
+                    ...inp,
+                    minHeight: 44,
+                    resize: "vertical" as const,
+                    fontSize: 11,
+                  }}
+                  placeholder="설명"
+                  value={feat.description}
+                  onChange={(e) => {
+                    const a = [...content.featureIcons];
+                    a[idx] = { ...feat, description: e.target.value };
+                    onUpdate({ featureIcons: a });
+                  }}
+                />
+                <PanelImage
+                  src={feat.image}
+                  onUpload={(src) => {
+                    const a = [...content.featureIcons];
+                    a[idx] = { ...feat, image: src };
+                    onUpdate({ featureIcons: a });
+                  }}
+                  onRemove={() => {
+                    const a = [...content.featureIcons];
+                    a[idx] = { ...feat, image: null };
+                    onUpdate({ featureIcons: a });
+                  }}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -4530,9 +4769,12 @@ function SidebarPanel({
           <div style={secTitle}>브랜드 가치</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {content.brandValues.map((val, idx) => (
-              <div key={val.id}>
+              <div
+                key={val.id}
+                style={{ display: "flex", flexDirection: "column", gap: 5 }}
+              >
                 <input
-                  style={{ ...inp, marginBottom: 4, fontWeight: 700 }}
+                  style={{ ...inp, fontWeight: 700 }}
                   placeholder="제목"
                   value={val.title}
                   onChange={(e) => {
@@ -4556,6 +4798,19 @@ function SidebarPanel({
                     onUpdate({ brandValues: a });
                   }}
                 />
+                <PanelImage
+                  src={val.image}
+                  onUpload={(src) => {
+                    const a = [...content.brandValues];
+                    a[idx] = { ...val, image: src };
+                    onUpdate({ brandValues: a });
+                  }}
+                  onRemove={() => {
+                    const a = [...content.brandValues];
+                    a[idx] = { ...val, image: null };
+                    onUpdate({ brandValues: a });
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -4576,45 +4831,69 @@ function SidebarPanel({
             {content.recommendItems.map((item, idx) => (
               <div
                 key={item.id}
-                style={{ display: "flex", gap: 5, alignItems: "flex-start" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 5,
+                  paddingBottom: 10,
+                  borderBottom:
+                    idx < content.recommendItems.length - 1
+                      ? "1px dashed #f0f0f0"
+                      : "none",
+                }}
               >
-                <textarea
-                  style={{
-                    ...inp,
-                    minHeight: 48,
-                    resize: "vertical" as const,
-                    flex: 1,
-                  }}
-                  value={item.text}
-                  onChange={(e) => {
+                <div style={{ display: "flex", gap: 5, alignItems: "flex-start" }}>
+                  <textarea
+                    style={{
+                      ...inp,
+                      minHeight: 48,
+                      resize: "vertical" as const,
+                      flex: 1,
+                    }}
+                    value={item.text}
+                    onChange={(e) => {
+                      const a = [...content.recommendItems];
+                      a[idx] = { ...item, text: e.target.value };
+                      onUpdate({ recommendItems: a });
+                    }}
+                  />
+                  <button
+                    style={{
+                      width: 26,
+                      height: 26,
+                      background: "transparent",
+                      border: "1px solid #e8e8e8",
+                      borderRadius: 4,
+                      cursor: "pointer",
+                      color: "#bbb",
+                      fontSize: 11,
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}
+                    onClick={() =>
+                      onUpdate({
+                        recommendItems: content.recommendItems.filter(
+                          (_, i) => i !== idx,
+                        ),
+                      })
+                    }
+                  >
+                    ✕
+                  </button>
+                </div>
+                <PanelImage
+                  src={item.image}
+                  onUpload={(src) => {
                     const a = [...content.recommendItems];
-                    a[idx] = { ...item, text: e.target.value };
+                    a[idx] = { ...item, image: src };
+                    onUpdate({ recommendItems: a });
+                  }}
+                  onRemove={() => {
+                    const a = [...content.recommendItems];
+                    a[idx] = { ...item, image: null };
                     onUpdate({ recommendItems: a });
                   }}
                 />
-                <button
-                  style={{
-                    width: 26,
-                    height: 26,
-                    background: "transparent",
-                    border: "1px solid #e8e8e8",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    color: "#bbb",
-                    fontSize: 11,
-                    flexShrink: 0,
-                    marginTop: 1,
-                  }}
-                  onClick={() =>
-                    onUpdate({
-                      recommendItems: content.recommendItems.filter(
-                        (_, i) => i !== idx,
-                      ),
-                    })
-                  }
-                >
-                  ✕
-                </button>
               </div>
             ))}
             <button
@@ -4670,6 +4949,7 @@ function SidebarPanel({
                 <textarea
                   style={{
                     ...inp,
+                    marginBottom: 6,
                     minHeight: 52,
                     resize: "vertical" as const,
                     fontSize: 11,
@@ -4681,8 +4961,428 @@ function SidebarPanel({
                     onUpdate({ checkpoints: a });
                   }}
                 />
+                <PanelImage
+                  src={cp.image}
+                  onUpload={(src) => {
+                    const a = [...content.checkpoints];
+                    a[idx] = { ...cp, image: src };
+                    onUpdate({ checkpoints: a });
+                  }}
+                  onRemove={() => {
+                    const a = [...content.checkpoints];
+                    a[idx] = { ...cp, image: null };
+                    onUpdate({ checkpoints: a });
+                  }}
+                />
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* 성능 그래프 */}
+        <div style={sec}>
+          <div style={secTitle}>성능 그래프</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {content.performance.map((perf, idx) => (
+              <div
+                key={perf.label + idx}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 96px 30px",
+                  gap: 6,
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  placeholder="항목"
+                  value={perf.label}
+                  onChange={(e) => {
+                    const a = [...content.performance];
+                    a[idx] = { ...perf, label: e.target.value };
+                    onUpdate({ performance: a });
+                  }}
+                />
+                <input
+                  type="range"
+                  min={0}
+                  max={5}
+                  step={0.5}
+                  value={perf.value}
+                  onChange={(e) => {
+                    const a = [...content.performance];
+                    a[idx] = { ...perf, value: Number(e.target.value) };
+                    onUpdate({ performance: a });
+                  }}
+                  style={{ width: "100%", accentColor: B.accent }}
+                />
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "#555",
+                    textAlign: "center",
+                  }}
+                >
+                  {perf.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 성능 비교 */}
+        <div style={sec}>
+          <div style={secTitle}>성능 비교</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
+              <div>
+                <label style={lbl}>본 제품</label>
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  value={content.comparison.thisLabel}
+                  onChange={(e) =>
+                    onUpdate({
+                      comparison: {
+                        ...content.comparison,
+                        thisLabel: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label style={lbl}>비교 대상</label>
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  value={content.comparison.compLabel}
+                  onChange={(e) =>
+                    onUpdate({
+                      comparison: {
+                        ...content.comparison,
+                        compLabel: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 48px 48px 26px",
+                gap: 5,
+                fontSize: 9,
+                fontWeight: 700,
+                color: "#bbb",
+                marginTop: 2,
+              }}
+            >
+              <span>항목</span>
+              <span style={{ textAlign: "center" }}>본 제품</span>
+              <span style={{ textAlign: "center" }}>타사</span>
+              <span />
+            </div>
+            {content.comparison.metrics.map((m, idx) => (
+              <div
+                key={m.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 48px 48px 26px",
+                  gap: 5,
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  placeholder="항목"
+                  value={m.label}
+                  onChange={(e) => {
+                    const a = [...content.comparison.metrics];
+                    a[idx] = { ...m, label: e.target.value };
+                    onUpdate({
+                      comparison: { ...content.comparison, metrics: a },
+                    });
+                  }}
+                />
+                <input
+                  style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
+                  type="number"
+                  min={0}
+                  max={5}
+                  step={0.5}
+                  value={m.thisVal}
+                  onChange={(e) => {
+                    const a = [...content.comparison.metrics];
+                    a[idx] = { ...m, thisVal: Number(e.target.value) };
+                    onUpdate({
+                      comparison: { ...content.comparison, metrics: a },
+                    });
+                  }}
+                />
+                <input
+                  style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
+                  type="number"
+                  min={0}
+                  max={5}
+                  step={0.5}
+                  value={m.compVal}
+                  onChange={(e) => {
+                    const a = [...content.comparison.metrics];
+                    a[idx] = { ...m, compVal: Number(e.target.value) };
+                    onUpdate({
+                      comparison: { ...content.comparison, metrics: a },
+                    });
+                  }}
+                />
+                <button
+                  style={{
+                    width: 26,
+                    height: 26,
+                    background: "transparent",
+                    border: "1px solid #e8e8e8",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    color: "#bbb",
+                    fontSize: 11,
+                  }}
+                  onClick={() =>
+                    onUpdate({
+                      comparison: {
+                        ...content.comparison,
+                        metrics: content.comparison.metrics.filter(
+                          (_, i) => i !== idx,
+                        ),
+                      },
+                    })
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              style={{
+                ...inp,
+                background: "#f7f7f7",
+                cursor: "pointer",
+                textAlign: "center" as const,
+                color: "#888",
+                border: "1px dashed #ddd",
+              }}
+              onClick={() =>
+                onUpdate({
+                  comparison: {
+                    ...content.comparison,
+                    metrics: [
+                      ...content.comparison.metrics,
+                      { id: Date.now(), label: "새 항목", thisVal: 5, compVal: 4 },
+                    ],
+                  },
+                })
+              }
+            >
+              + 비교 항목 추가
+            </button>
+          </div>
+        </div>
+
+        {/* 리뷰 */}
+        <div style={sec}>
+          <div style={secTitle}>리뷰</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
+              <div>
+                <label style={lbl}>평균 별점</label>
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  type="number"
+                  min={0}
+                  max={5}
+                  step={0.1}
+                  value={content.reviews.average}
+                  onChange={(e) =>
+                    onUpdate({
+                      reviews: {
+                        ...content.reviews,
+                        average: Number(e.target.value),
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label style={lbl}>총 리뷰 수</label>
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  type="number"
+                  min={0}
+                  value={content.reviews.totalCount}
+                  onChange={(e) =>
+                    onUpdate({
+                      reviews: {
+                        ...content.reviews,
+                        totalCount: Number(e.target.value),
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={lbl}>별점 분포</label>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {content.reviews.distribution.map((d, idx) => (
+                  <div
+                    key={d.stars}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "40px 1fr",
+                      gap: 6,
+                      alignItems: "center",
+                    }}
+                  >
+                    <span style={{ fontSize: 11, color: "#888" }}>
+                      {d.stars}점
+                    </span>
+                    <input
+                      style={{ ...inp, fontSize: 11 }}
+                      type="number"
+                      min={0}
+                      value={d.count}
+                      onChange={(e) => {
+                        const a = [...content.reviews.distribution];
+                        a[idx] = { ...d, count: Number(e.target.value) };
+                        onUpdate({
+                          reviews: { ...content.reviews, distribution: a },
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <label style={lbl}>리뷰 목록</label>
+            {content.reviews.items.map((item, idx) => (
+              <div
+                key={item.id}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 5,
+                  paddingBottom: 10,
+                  borderBottom:
+                    idx < content.reviews.items.length - 1
+                      ? "1px dashed #f0f0f0"
+                      : "none",
+                }}
+              >
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 60px 26px", gap: 5 }}>
+                  <input
+                    style={{ ...inp, fontSize: 11 }}
+                    placeholder="작성자"
+                    value={item.author}
+                    onChange={(e) => {
+                      const a = [...content.reviews.items];
+                      a[idx] = { ...item, author: e.target.value };
+                      onUpdate({ reviews: { ...content.reviews, items: a } });
+                    }}
+                  />
+                  <input
+                    style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={item.rating}
+                    onChange={(e) => {
+                      const a = [...content.reviews.items];
+                      a[idx] = { ...item, rating: Number(e.target.value) };
+                      onUpdate({ reviews: { ...content.reviews, items: a } });
+                    }}
+                  />
+                  <button
+                    style={{
+                      width: 26,
+                      height: 26,
+                      background: "transparent",
+                      border: "1px solid #e8e8e8",
+                      borderRadius: 4,
+                      cursor: "pointer",
+                      color: "#bbb",
+                      fontSize: 11,
+                    }}
+                    onClick={() =>
+                      onUpdate({
+                        reviews: {
+                          ...content.reviews,
+                          items: content.reviews.items.filter(
+                            (_, i) => i !== idx,
+                          ),
+                        },
+                      })
+                    }
+                  >
+                    ✕
+                  </button>
+                </div>
+                <input
+                  style={{ ...inp, fontSize: 11 }}
+                  placeholder="날짜 (예: 2026.05.10)"
+                  value={item.date}
+                  onChange={(e) => {
+                    const a = [...content.reviews.items];
+                    a[idx] = { ...item, date: e.target.value };
+                    onUpdate({ reviews: { ...content.reviews, items: a } });
+                  }}
+                />
+                <textarea
+                  style={{
+                    ...inp,
+                    minHeight: 48,
+                    resize: "vertical" as const,
+                    fontSize: 11,
+                  }}
+                  placeholder="리뷰 내용"
+                  value={item.text}
+                  onChange={(e) => {
+                    const a = [...content.reviews.items];
+                    a[idx] = { ...item, text: e.target.value };
+                    onUpdate({ reviews: { ...content.reviews, items: a } });
+                  }}
+                />
+              </div>
+            ))}
+            <button
+              style={{
+                ...inp,
+                background: "#f7f7f7",
+                cursor: "pointer",
+                textAlign: "center" as const,
+                color: "#888",
+                border: "1px dashed #ddd",
+              }}
+              onClick={() =>
+                onUpdate({
+                  reviews: {
+                    ...content.reviews,
+                    items: [
+                      ...content.reviews.items,
+                      {
+                        id: Date.now(),
+                        author: "구매자**",
+                        rating: 5,
+                        date: "2026.01.01",
+                        text: "새 리뷰 내용",
+                      },
+                    ],
+                  },
+                })
+              }
+            >
+              + 리뷰 추가
+            </button>
           </div>
         </div>
 
@@ -4780,20 +5480,36 @@ export default function Page() {
     if (!previewRef.current) return;
     setExporting(true);
 
-    // scrollWrapRef만 제약 해제 → outerRef(사이드바 포함)는 건드리지 않음
+    // 캡처 시 전체 페이지가 잘리는 문제:
+    //   outerRef(최외곽)는 height:100vh + overflow:hidden, scrollWrapRef는 overflowY:auto.
+    //   둘 다 뷰포트 높이로 콘텐츠를 클리핑하므로, 두 컨테이너 모두 제약을 풀어야
+    //   previewRef의 전체 높이가 캡처된다. (기존엔 scrollWrapRef만 풀어 outerRef에서 잘림)
     const scroller = scrollWrapRef.current;
-    const prevScrollOverflow = scroller?.style.overflowY ?? "";
-    const prevScrollHeight = scroller?.style.height ?? "";
-    const prevScrollPadding = scroller?.style.padding ?? "";
-    const prevScrollJustify = scroller?.style.justifyContent ?? "";
+    const outer = outerRef.current;
+
+    const prevScroll = {
+      overflowY: scroller?.style.overflowY ?? "",
+      height: scroller?.style.height ?? "",
+      padding: scroller?.style.padding ?? "",
+      justifyContent: scroller?.style.justifyContent ?? "",
+    };
+    const prevOuter = {
+      height: outer?.style.height ?? "",
+      overflow: outer?.style.overflow ?? "",
+    };
+
     // 스크롤 위치 리셋: 스크롤된 상태에서 캡처하면 getBoundingClientRect 오프셋 발생
-    if (scroller) scroller.scrollTop = 0;
     if (scroller) {
+      scroller.scrollTop = 0;
       scroller.style.overflowY = "visible";
       scroller.style.height = "auto";
       // padding·justify 제거: flex 컨테이너 offset이 캡처 위치를 밀어냄
       scroller.style.padding = "0";
       scroller.style.justifyContent = "flex-start";
+    }
+    if (outer) {
+      outer.style.height = "auto";
+      outer.style.overflow = "visible";
     }
 
     try {
@@ -4801,6 +5517,12 @@ export default function Page() {
       const el = previewRef.current;
       // 폰트 로딩 완료 대기: 폰트 미로드 시 line-height·자간이 fallback 폰트 기준으로 렌더링됨
       await document.fonts.ready;
+      // 레이아웃 반영 대기: 위에서 푼 제약이 적용된 뒤의 실제 높이를 측정해야 함
+      await new Promise((r) => requestAnimationFrame(() => r(null)));
+
+      // 전체 높이를 명시적으로 전달 → 뷰포트 기준 클리핑 방지
+      const fullWidth = el.scrollWidth;
+      const fullHeight = el.scrollHeight;
       const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
@@ -4808,6 +5530,10 @@ export default function Page() {
         logging: false,
         scrollX: 0,
         scrollY: 0,
+        width: fullWidth,
+        height: fullHeight,
+        windowWidth: fullWidth,
+        windowHeight: fullHeight,
         ignoreElements: (el: Element) => el.classList.contains("export-ignore"),
       });
       const link = document.createElement("a");
@@ -4818,12 +5544,15 @@ export default function Page() {
       console.error(err);
       alert("PNG 익스포트 중 오류가 발생했습니다.");
     } finally {
-      // scrollWrapRef만 복원
       if (scroller) {
-        scroller.style.overflowY = prevScrollOverflow;
-        scroller.style.height = prevScrollHeight;
-        scroller.style.padding = prevScrollPadding;
-        scroller.style.justifyContent = prevScrollJustify;
+        scroller.style.overflowY = prevScroll.overflowY;
+        scroller.style.height = prevScroll.height;
+        scroller.style.padding = prevScroll.padding;
+        scroller.style.justifyContent = prevScroll.justifyContent;
+      }
+      if (outer) {
+        outer.style.height = prevOuter.height;
+        outer.style.overflow = prevOuter.overflow;
       }
       setExporting(false);
     }
