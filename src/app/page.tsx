@@ -5513,7 +5513,7 @@ export default function Page() {
     }
 
     try {
-      const html2canvas = (await import("html2canvas")).default;
+      const { domToPng } = await import("modern-screenshot");
       const el = previewRef.current;
       // 폰트 로딩 완료 대기: 폰트 미로드 시 line-height·자간이 fallback 폰트 기준으로 렌더링됨
       await document.fonts.ready;
@@ -5523,22 +5523,20 @@ export default function Page() {
       // 전체 높이를 명시적으로 전달 → 뷰포트 기준 클리핑 방지
       const fullWidth = el.scrollWidth;
       const fullHeight = el.scrollHeight;
-      const canvas = await html2canvas(el, {
+      // modern-screenshot은 실제 브라우저 렌더링(SVG foreignObject)을 사용하므로
+      // html2canvas의 CSS 재구현으로 인한 여백·box 깨짐이 발생하지 않는다.
+      const dataUrl = await domToPng(el, {
         scale: 2,
-        useCORS: true,
         backgroundColor: "#ffffff",
-        logging: false,
-        scrollX: 0,
-        scrollY: 0,
         width: fullWidth,
         height: fullHeight,
-        windowWidth: fullWidth,
-        windowHeight: fullHeight,
-        ignoreElements: (el: Element) => el.classList.contains("export-ignore"),
+        // filter는 html2canvas의 ignoreElements와 반대: 포함할 노드에 true 반환
+        filter: (node: Node) =>
+          !(node instanceof Element && node.classList.contains("export-ignore")),
       });
       const link = document.createElement("a");
       link.download = `${content.modelName.replace(/\s/g, "_")}_detail.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error(err);
