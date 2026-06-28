@@ -2,6 +2,8 @@
 
 import { useState, useRef } from "react";
 import { Download, Upload, Trash2, Image as ImageIcon } from "lucide-react";
+import type { Content } from "@/content/types";
+import { ta21Content } from "@/content/ta21";
 
 // ═══════════════════════════════════════════════════════
 // Brand Color System
@@ -37,193 +39,10 @@ const B = {
 } as const;
 
 // ═══════════════════════════════════════════════════════
-// Default Content
+// Default Content (imported from content files)
 // ═══════════════════════════════════════════════════════
-const defaultContent = {
-  brand: "KUMHO TIRE",
-  modelName: "크루젠 HP71",
-  tagline: "고성능 컴포트 SUV 타이어",
-  description:
-    "차량 타입별 최적화된 프리미엄 성능과 디자인. 첨단 기술이 집약된 주행 안정성과 저소음 컴포트.",
-  category: "SUV / 사계절",
+const defaultContent: Content = { ...ta21Content };
 
-  heroImage: "/temp_img.webp" as string | null,
-  productImage: null as string | null,
-
-  carType: "suv" as string,
-  season: "allseason" as string,
-  grade: "premium" as string,
-
-  quickSpecs: [
-    { id: 1, code: "M+S", label: "전천후 주행" },
-    { id: 2, code: "4CH", label: "수막현상 방지" },
-    { id: 3, code: "5VP", label: "저소음 패턴" },
-    { id: 4, code: "WET", label: "습윤 제동력" },
-  ],
-
-  recommendTitle: "이런 분들께 추천드립니다",
-  recommendItems: [
-    {
-      id: 1,
-      text: "고급형 SUV 타이어를 원하시는 분",
-      image: null as string | null,
-    },
-    {
-      id: 2,
-      text: "눈·비에도 안정적인 주행을 원하시는 분",
-      image: null as string | null,
-    },
-  ],
-
-  performance: [
-    { label: "마일리지", value: 4 },
-    { label: "핸들링", value: 4 },
-    { label: "제동력", value: 5 },
-    { label: "승차감", value: 5 },
-    { label: "정숙성", value: 5 },
-  ],
-
-  comparison: {
-    thisLabel: "크루젠 HP71",
-    compLabel: "타사 동급 타이어",
-    metrics: [
-      { id: 1, label: "승차감", thisVal: 5.0, compVal: 4.0 },
-      { id: 2, label: "정숙성", thisVal: 5.0, compVal: 4.0 },
-      { id: 3, label: "건조 핸들링", thisVal: 5.0, compVal: 4.0 },
-      { id: 4, label: "건조 제동", thisVal: 5.0, compVal: 4.5 },
-      { id: 5, label: "습윤 제동", thisVal: 4.5, compVal: 4.0 },
-    ],
-  },
-
-  checkpoints: [
-    {
-      id: 1,
-      number: "01",
-      title: "안전한 컴파운드 소재",
-      description:
-        "고함량 실리카 소재 컴파운드는 겨울철에도 노면과의 탄성을 유지해 안정적인 주행 성능을 제공합니다.",
-      image: null as string | null,
-    },
-    {
-      id: 2,
-      number: "02",
-      title: "저소음 패턴 설계",
-      description:
-        "5개의 가변 피치와 접지 형상을 고려한 그루브 앵글 적용으로 정숙성을 크게 향상시킵니다.",
-      image: null as string | null,
-    },
-    {
-      id: 3,
-      number: "03",
-      title: "젖은 노면 제동력 그루브",
-      description:
-        "4개의 넓은 그루브가 젖은 노면에서 수막현상을 방지하여 제동력을 한층 강화합니다.",
-      image: null as string | null,
-    },
-  ],
-
-  reviews: {
-    average: 4.8,
-    totalCount: 1247,
-    distribution: [
-      { stars: 5, count: 978 },
-      { stars: 4, count: 186 },
-      { stars: 3, count: 58 },
-      { stars: 2, count: 18 },
-      { stars: 1, count: 7 },
-    ],
-    items: [
-      {
-        id: 1,
-        author: "드라이버**",
-        rating: 5,
-        date: "2026.05.10",
-        text: "소음이 정말 없네요. 고속도로 장거리 주행에도 피로감이 크게 줄었습니다.",
-      },
-      {
-        id: 2,
-        author: "장거리**",
-        rating: 5,
-        date: "2026.04.28",
-        text: "빗길 제동력이 눈에 띄게 좋아졌고 승차감도 매우 부드럽습니다.",
-      },
-    ],
-  },
-
-  options: [
-    { id: 1, size: "225/45R17 94W XL", season: "사계절" },
-    { id: 2, size: "235/55R18 100V", season: "사계절" },
-    { id: 3, size: "255/50R20 109W XL", season: "사계절" },
-  ],
-
-  keySpecs: [
-    { id: 1, label: "차량 구분", value: "승용 타이어" },
-    { id: 2, label: "계절 성능", value: "사계절 (Mud + Snow, M+S)" },
-    { id: 3, label: "특장점", value: "정숙성, 승차감, 퍼포먼스 성능" },
-    { id: 4, label: "하중지수", value: "99 (775kg)" },
-    { id: 5, label: "속도지수", value: "W (270km/h)" },
-  ],
-
-  featureIcons: [
-    {
-      id: 1,
-      label: "제동력",
-      description: "뛰어난 제동 성능으로 안전한 주행을 보장합니다.",
-      image: null as string | null,
-    },
-    {
-      id: 2,
-      label: "정숙성",
-      description: "저소음 패턴 설계로 조용하고 쾌적한 승차감을 제공합니다.",
-      image: null as string | null,
-    },
-    {
-      id: 3,
-      label: "연비 효율성",
-      description: "구름 저항 최소화로 연료 소비를 줄여줍니다.",
-      image: null as string | null,
-    },
-    {
-      id: 4,
-      label: "승차감",
-      description: "최적화된 컴파운드로 부드럽고 안정적인 주행감을 선사합니다.",
-      image: null as string | null,
-    },
-  ],
-
-  brandValues: [
-    {
-      id: 1,
-      title: "정직한 가격",
-      description:
-        "온라인과 오프라인 모두 동일한 가격으로 신뢰할 수 있는 구매 환경을 제공합니다.",
-      image: null as string | null,
-    },
-    {
-      id: 2,
-      title: "신속한 장착",
-      description:
-        "주문부터 장착까지 빠르게 진행되어 고객님의 소중한 시간을 아껴드립니다.",
-      image: null as string | null,
-    },
-    {
-      id: 3,
-      title: "안심 품질 보증",
-      description:
-        "모든 타이어는 철저한 검수와 품질 관리를 거쳐 최고 수준의 성능을 보장합니다.",
-      image: null as string | null,
-    },
-    {
-      id: 4,
-      title: "전문가 상담",
-      description:
-        "10년 이상 경력의 타이어 전문가가 차량에 꼭 맞는 제품을 안내해드립니다.",
-      image: null as string | null,
-    },
-  ],
-};
-
-type Content = typeof defaultContent;
 
 // ═══════════════════════════════════════════════════════
 // EditableText
@@ -1776,7 +1595,7 @@ function CoreSpecs({
 }
 
 // ═══════════════════════════════════════════════════════
-// FeatureIcons — 2×2 기능 아이콘 그리드
+// FeatureIcons — 4×2 성능 아이콘 그리드 + 트레드 이미지
 // ═══════════════════════════════════════════════════════
 function FeatureIcons({
   content,
@@ -1790,12 +1609,13 @@ function FeatureIcons({
     <section
       style={{
         background: B.canvasSoft,
-        padding: "56px 48px",
+        padding: "56px 0",
         borderBottom: `1px solid ${B.lightBorder}`,
       }}
     >
-      <div style={{ maxWidth: 560, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 28 }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        {/* 섹션 헤더 */}
+        <div style={{ textAlign: "center", marginBottom: 28, padding: "0 48px" }}>
           <div
             style={{
               fontSize: 11,
@@ -1805,7 +1625,7 @@ function FeatureIcons({
               marginBottom: 6,
             }}
           >
-            믿을 수 있는 품질과 성능
+            PERFORMANCE
           </div>
           <h2
             style={{
@@ -1816,91 +1636,148 @@ function FeatureIcons({
               letterSpacing: "-0.5px",
             }}
           >
-            <EditableText
-              value={content.modelName}
-              onChange={(v) => onUpdate({ modelName: v })}
-              block
-              style={{ fontSize: 22, fontWeight: 900, color: B.ink }}
-            />
+            이 타이어가 잘하는 8가지
           </h2>
         </div>
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
-          {content.featureIcons.map((feat, idx) => {
-            const Icon = iconComponents[idx % iconComponents.length];
-            return (
-              <div
-                key={feat.id}
-                style={{
-                  background: B.canvas,
-                  border: `1px solid ${B.lightBorder}`,
-                  borderRadius: 12,
-                  padding: "28px 16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 14,
-                }}
-              >
-                <div
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: "50%",
-                    border: `2px solid ${B.lightBorderStrong}`,
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}
-                >
-                  <ImageSlot
-                    src={feat.image}
-                    onUpload={(src) => {
-                      const a = [...content.featureIcons];
-                      a[idx] = { ...feat, image: src };
-                      onUpdate({ featureIcons: a });
-                    }}
-                    onRemove={() => {
-                      const a = [...content.featureIcons];
-                      a[idx] = { ...feat, image: null };
-                      onUpdate({ featureIcons: a });
-                    }}
-                    aspectRatio="1/1"
-                    label=""
-                    fallback={<Icon color={B.ink} />}
-                  />
-                </div>
-                <span
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 700,
-                    color: B.ink,
-                    textAlign: "center",
-                  }}
-                >
-                  <EditableText
-                    value={feat.label}
-                    onChange={(v) => {
-                      const a = [...content.featureIcons];
-                      a[idx] = { ...feat, label: v };
-                      onUpdate({ featureIcons: a });
-                    }}
-                    style={{ fontSize: 14, fontWeight: 700, color: B.ink }}
-                  />
-                </span>
-              </div>
-            );
-          })}
-        </div>
+
+        {/* 트레드 패턴 이미지 (풀폭) */}
         <div
           style={{
-            textAlign: "center",
-            marginTop: 20,
-            fontSize: 12,
-            color: B.muted,
+            width: "100%",
+            marginBottom: 32,
+            background: B.canvas,
+            overflow: "hidden",
           }}
         >
-          안전성, 쾌적함, 경제성까지 모두 갖춘 스마트한 선택!
+          <ImageSlot
+            src={content.treadImage}
+            onUpload={() => {}}
+            onRemove={() => {}}
+            aspectRatio="16/7"
+            label="트레드 패턴"
+            fallback={
+              <div style={{ width: "100%", height: "100%", background: B.canvasSoft, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 14, color: B.muted }}>트레드 패턴 이미지</span>
+              </div>
+            }
+          />
+        </div>
+
+        {/* 4x2 아이콘 그리드 */}
+        <div style={{ padding: "0 32px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: 12,
+            }}
+          >
+            {content.featureIcons.map((feat, idx) => {
+              const Icon = idx >= 4 ? iconComponents[idx - 4] : null;
+              return (
+                <div
+                  key={feat.id}
+                  style={{
+                    background: B.canvas,
+                    border: `1px solid ${B.lightBorder}`,
+                    borderRadius: 10,
+                    padding: "20px 10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: "50%",
+                      border: `1.5px solid ${B.lightBorderStrong}`,
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ImageSlot
+                      src={feat.image}
+                      onUpload={(src) => {
+                        const a = [...content.featureIcons];
+                        a[idx] = { ...feat, image: src };
+                        onUpdate({ featureIcons: a });
+                      }}
+                      onRemove={() => {
+                        const a = [...content.featureIcons];
+                        a[idx] = { ...feat, image: null };
+                        onUpdate({ featureIcons: a });
+                      }}
+                      aspectRatio="1/1"
+                      label=""
+                      fallback={
+                        Icon ? (
+                          <Icon color={B.ink} />
+                        ) : (
+                          <div
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              background: B.canvasSoft,
+                              fontSize: 11,
+                              fontWeight: 800,
+                              color: B.muted,
+                            }}
+                          >
+                            {feat.label.slice(0, 3)}
+                          </div>
+                        )
+                      }
+                    />
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.ink,
+                      textAlign: "center",
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    <EditableText
+                      value={feat.label}
+                      onChange={(v) => {
+                        const a = [...content.featureIcons];
+                        a[idx] = { ...feat, label: v };
+                        onUpdate({ featureIcons: a });
+                      }}
+                      style={{ fontSize: 12, fontWeight: 700, color: B.ink }}
+                    />
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      color: B.muted,
+                      textAlign: "center",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <EditableText
+                      value={feat.description}
+                      onChange={(v) => {
+                        const a = [...content.featureIcons];
+                        a[idx] = { ...feat, description: v };
+                        onUpdate({ featureIcons: a });
+                      }}
+                      multiline
+                      block
+                      style={{ fontSize: 10, color: B.muted }}
+                    />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -2072,32 +1949,6 @@ function TireStory({
 }) {
   const iconComponents = [IconBraking, IconQuiet, IconEfficiency, IconComfort];
 
-  // ── 레이더 차트 (SVG 오각형) ──────────────────────────
-  const radarSize = 220;
-  const cx = radarSize / 2;
-  const cy = radarSize / 2;
-  const maxR = 88;
-  const levels = 4;
-  const angleStep = (Math.PI * 2) / 5;
-  const startAngle = -Math.PI / 2;
-
-  const toXY = (angle: number, r: number) => ({
-    x: cx + r * Math.cos(angle),
-    y: cy + r * Math.sin(angle),
-  });
-
-  const polygonPoints = (r: number) =>
-    Array.from({ length: 5 }, (_, i) => {
-      const p = toXY(startAngle + i * angleStep, r);
-      return `${p.x},${p.y}`;
-    }).join(" ");
-
-  const dataPoints = content.performance.map((m, i) => {
-    const r = (m.value / 5) * maxR;
-    return toXY(startAngle + i * angleStep, r);
-  });
-  const dataPolygon = dataPoints.map((p) => `${p.x},${p.y}`).join(" ");
-
   return (
     <>
       {/* ── Block 1: 포스터 소개 ───────────────────────── */}
@@ -2253,91 +2104,7 @@ function TireStory({
           </div>
         </div>
 
-        {/* 2×2 피처 그리드 */}
-        <div style={{ padding: "40px 32px 0" }}>
-          <div
-            style={{
-              maxWidth: 520,
-              margin: "0 auto",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-            }}
-          >
-            {content.featureIcons.map((feat, idx) => {
-              const Icon = iconComponents[idx % 4];
-              const isRight = idx % 2 === 1;
-              const isBottom = idx >= 2;
-              return (
-                <div
-                  key={feat.id}
-                  style={{
-                    padding: "24px 20px",
-                    borderRight: isRight
-                      ? "none"
-                      : `1px solid ${B.lightBorder}`,
-                    borderBottom: isBottom
-                      ? "none"
-                      : `1px solid ${B.lightBorder}`,
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 14,
-                  }}
-                >
-                  {/* 아이콘 원 */}
-                  <div
-                    style={{
-                      flexShrink: 0,
-                      width: 52,
-                      height: 52,
-                      borderRadius: "50%",
-                      border: `1.5px solid ${B.lightBorderStrong}`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Icon color={B.muted} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: B.ink,
-                        marginBottom: 4,
-                      }}
-                    >
-                      <EditableText
-                        value={feat.label}
-                        onChange={(v) => {
-                          const a = [...content.featureIcons];
-                          a[idx] = { ...feat, label: v };
-                          onUpdate({ featureIcons: a });
-                        }}
-                        style={{ fontSize: 15, fontWeight: 700, color: B.ink }}
-                      />
-                    </div>
-                    <div
-                      style={{ fontSize: 12, color: B.muted, lineHeight: 1.5 }}
-                    >
-                      <EditableText
-                        value={feat.description}
-                        onChange={(v) => {
-                          const a = [...content.featureIcons];
-                          a[idx] = { ...feat, description: v };
-                          onUpdate({ featureIcons: a });
-                        }}
-                        multiline
-                        block
-                        style={{ fontSize: 12, color: B.muted }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* featureIcons grid moved to standalone FeatureIcons section */}
 
         {/* 하단 다크 배너 */}
         <div
@@ -2363,7 +2130,7 @@ function TireStory({
         </div>
       </section>
 
-      {/* ── Block 3: 레이더 차트 ───────────────────────── */}
+      {/* ── Block 3: 수평 바 차트 (성능 퍼포먼스) ──────── */}
       <section
         style={{
           background: "#ebebeb",
@@ -2398,7 +2165,7 @@ function TireStory({
               fontStyle: "italic",
             }}
           >
-            "주요 성능 한눈에 보기"
+            &ldquo;주요 성능 한눈에 보기&rdquo;
           </h3>
           <div
             style={{
@@ -2410,91 +2177,62 @@ function TireStory({
           />
         </div>
 
-        {/* SVG 오각형 레이더 */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "0 32px 8px",
-          }}
-        >
-          <svg
-            width={radarSize}
-            height={radarSize}
-            viewBox={`0 0 ${radarSize} ${radarSize}`}
-          >
-            {/* 배경 동심 오각형 */}
-            {Array.from({ length: levels }, (_, l) => {
-              const r = (maxR * (l + 1)) / levels;
-              return (
-                <polygon
-                  key={l}
-                  points={polygonPoints(r)}
-                  fill={l === levels - 1 ? "#d8d8d8" : "none"}
-                  stroke="#c0c0c0"
-                  strokeWidth="1"
+        {/* 수평 바 차트 (CSS div 기반) */}
+        <div style={{ maxWidth: 460, margin: "0 auto", padding: "0 32px 8px" }}>
+          {content.performance.map((m) => (
+            <div
+              key={m.label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                marginBottom: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 64,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: B.ink,
+                  textAlign: "right",
+                  flexShrink: 0,
+                }}
+              >
+                {m.label}
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  height: 8,
+                  background: "#d0d0d0",
+                  borderRadius: 4,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${(m.value / 5) * 100}%`,
+                    height: "100%",
+                    background: B.ink,
+                    borderRadius: 4,
+                  }}
                 />
-              );
-            })}
-            {/* 축 선 */}
-            {content.performance.map((_, i) => {
-              const outer = toXY(startAngle + i * angleStep, maxR);
-              return (
-                <line
-                  key={i}
-                  x1={cx}
-                  y1={cy}
-                  x2={outer.x}
-                  y2={outer.y}
-                  stroke="#b0b0b0"
-                  strokeWidth="1"
-                />
-              );
-            })}
-            {/* 데이터 다각형 */}
-            <polygon
-              points={dataPolygon}
-              fill="rgba(0,0,0,0.15)"
-              stroke={B.ink}
-              strokeWidth="1.8"
-            />
-            {/* 꼭짓점 원 */}
-            {dataPoints.map((p, i) => (
-              <circle key={i} cx={p.x} cy={p.y} r="4" fill={B.ink} />
-            ))}
-            {/* 레이블 */}
-            {content.performance.map((m, i) => {
-              const labelR = maxR + 20;
-              const lp = toXY(startAngle + i * angleStep, labelR);
-              return (
-                <g key={i}>
-                  <text
-                    x={lp.x}
-                    y={lp.y}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize="11"
-                    fontWeight="700"
-                    fill={B.ink}
-                    fontFamily="Pretendard, sans-serif"
-                  >
-                    {m.label}
-                  </text>
-                  <text
-                    x={lp.x}
-                    y={lp.y + 14}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize="10"
-                    fill={B.muted}
-                    fontFamily="Pretendard, sans-serif"
-                  >
-                    ({m.value.toFixed(1)})
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+              </div>
+              <div
+                style={{
+                  width: 28,
+                  fontSize: 12,
+                  fontWeight: 800,
+                  color: B.ink,
+                  textAlign: "left",
+                  flexShrink: 0,
+                }}
+              >
+                {m.value.toFixed(1)}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* 하단 다크 배너 (코너 브라켓) */}
@@ -2507,7 +2245,6 @@ function TireStory({
             textAlign: "center",
           }}
         >
-          {/* 코너 브라켓 ┌ */}
           <div
             style={{
               position: "absolute",
@@ -2519,7 +2256,6 @@ function TireStory({
               borderLeft: "1.5px solid rgba(255,255,255,0.3)",
             }}
           />
-          {/* 코너 브라켓 ┘ */}
           <div
             style={{
               position: "absolute",
@@ -4532,6 +4268,12 @@ function SidebarPanel({
               onUpload={(src) => onUpdate({ productImage: src })}
               onRemove={() => onUpdate({ productImage: null })}
             />
+            <PanelImage
+              label="트레드 패턴 이미지"
+              src={content.treadImage}
+              onUpload={(src) => onUpdate({ treadImage: src })}
+              onRemove={() => onUpdate({ treadImage: null })}
+            />
           </div>
         </div>
 
@@ -4584,84 +4326,6 @@ function SidebarPanel({
           </div>
         </div>
 
-        {/* 빠른 스펙 (배지) */}
-        <div style={sec}>
-          <div style={secTitle}>빠른 스펙 (배지)</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {content.quickSpecs.map((qs, idx) => (
-              <div
-                key={qs.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "64px 1fr 26px",
-                  gap: 5,
-                  alignItems: "center",
-                }}
-              >
-                <input
-                  style={{ ...inp, fontSize: 11, fontWeight: 700 }}
-                  placeholder="코드"
-                  value={qs.code}
-                  onChange={(e) => {
-                    const a = [...content.quickSpecs];
-                    a[idx] = { ...qs, code: e.target.value };
-                    onUpdate({ quickSpecs: a });
-                  }}
-                />
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  placeholder="설명"
-                  value={qs.label}
-                  onChange={(e) => {
-                    const a = [...content.quickSpecs];
-                    a[idx] = { ...qs, label: e.target.value };
-                    onUpdate({ quickSpecs: a });
-                  }}
-                />
-                <button
-                  style={{
-                    width: 26,
-                    height: 26,
-                    background: "transparent",
-                    border: "1px solid #e8e8e8",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    color: "#bbb",
-                    fontSize: 11,
-                  }}
-                  onClick={() =>
-                    onUpdate({
-                      quickSpecs: content.quickSpecs.filter((_, i) => i !== idx),
-                    })
-                  }
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button
-              style={{
-                ...inp,
-                background: "#f7f7f7",
-                cursor: "pointer",
-                textAlign: "center" as const,
-                color: "#888",
-                border: "1px dashed #ddd",
-              }}
-              onClick={() =>
-                onUpdate({
-                  quickSpecs: [
-                    ...content.quickSpecs,
-                    { id: Date.now(), code: "NEW", label: "새 항목" },
-                  ],
-                })
-              }
-            >
-              + 배지 추가
-            </button>
-          </div>
-        </div>
-
         {/* 핵심 스펙 */}
         <div style={sec}>
           <div style={secTitle}>핵심 스펙</div>
@@ -4702,7 +4366,7 @@ function SidebarPanel({
 
         {/* 기능 아이콘 */}
         <div style={sec}>
-          <div style={secTitle}>기능 아이콘 (2×2)</div>
+          <div style={secTitle}>기능 아이콘 (4×2)</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {content.featureIcons.map((feat, idx) => (
               <div
@@ -4813,109 +4477,6 @@ function SidebarPanel({
                 />
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* 추천 대상 */}
-        <div style={sec}>
-          <div style={secTitle}>추천 대상</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div>
-              <label style={lbl}>섹션 제목</label>
-              <input
-                style={inp}
-                value={content.recommendTitle}
-                onChange={(e) => onUpdate({ recommendTitle: e.target.value })}
-              />
-            </div>
-            {content.recommendItems.map((item, idx) => (
-              <div
-                key={item.id}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 5,
-                  paddingBottom: 10,
-                  borderBottom:
-                    idx < content.recommendItems.length - 1
-                      ? "1px dashed #f0f0f0"
-                      : "none",
-                }}
-              >
-                <div style={{ display: "flex", gap: 5, alignItems: "flex-start" }}>
-                  <textarea
-                    style={{
-                      ...inp,
-                      minHeight: 48,
-                      resize: "vertical" as const,
-                      flex: 1,
-                    }}
-                    value={item.text}
-                    onChange={(e) => {
-                      const a = [...content.recommendItems];
-                      a[idx] = { ...item, text: e.target.value };
-                      onUpdate({ recommendItems: a });
-                    }}
-                  />
-                  <button
-                    style={{
-                      width: 26,
-                      height: 26,
-                      background: "transparent",
-                      border: "1px solid #e8e8e8",
-                      borderRadius: 4,
-                      cursor: "pointer",
-                      color: "#bbb",
-                      fontSize: 11,
-                      flexShrink: 0,
-                      marginTop: 1,
-                    }}
-                    onClick={() =>
-                      onUpdate({
-                        recommendItems: content.recommendItems.filter(
-                          (_, i) => i !== idx,
-                        ),
-                      })
-                    }
-                  >
-                    ✕
-                  </button>
-                </div>
-                <PanelImage
-                  src={item.image}
-                  onUpload={(src) => {
-                    const a = [...content.recommendItems];
-                    a[idx] = { ...item, image: src };
-                    onUpdate({ recommendItems: a });
-                  }}
-                  onRemove={() => {
-                    const a = [...content.recommendItems];
-                    a[idx] = { ...item, image: null };
-                    onUpdate({ recommendItems: a });
-                  }}
-                />
-              </div>
-            ))}
-            <button
-              style={{
-                ...inp,
-                background: "#f7f7f7",
-                cursor: "pointer",
-                textAlign: "center" as const,
-                color: "#888",
-                border: "1px dashed #ddd",
-              }}
-              onClick={() =>
-                onUpdate({
-                  recommendItems: [
-                    ...content.recommendItems,
-                    { id: Date.now(), text: "새 추천 항목", image: null },
-                  ],
-                })
-              }
-            >
-              + 항목 추가
-            </button>
           </div>
         </div>
 
@@ -5031,432 +4592,6 @@ function SidebarPanel({
           </div>
         </div>
 
-        {/* 성능 비교 */}
-        <div style={sec}>
-          <div style={secTitle}>성능 비교</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
-              <div>
-                <label style={lbl}>본 제품</label>
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  value={content.comparison.thisLabel}
-                  onChange={(e) =>
-                    onUpdate({
-                      comparison: {
-                        ...content.comparison,
-                        thisLabel: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label style={lbl}>비교 대상</label>
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  value={content.comparison.compLabel}
-                  onChange={(e) =>
-                    onUpdate({
-                      comparison: {
-                        ...content.comparison,
-                        compLabel: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 48px 48px 26px",
-                gap: 5,
-                fontSize: 9,
-                fontWeight: 700,
-                color: "#bbb",
-                marginTop: 2,
-              }}
-            >
-              <span>항목</span>
-              <span style={{ textAlign: "center" }}>본 제품</span>
-              <span style={{ textAlign: "center" }}>타사</span>
-              <span />
-            </div>
-            {content.comparison.metrics.map((m, idx) => (
-              <div
-                key={m.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 48px 48px 26px",
-                  gap: 5,
-                  alignItems: "center",
-                }}
-              >
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  placeholder="항목"
-                  value={m.label}
-                  onChange={(e) => {
-                    const a = [...content.comparison.metrics];
-                    a[idx] = { ...m, label: e.target.value };
-                    onUpdate({
-                      comparison: { ...content.comparison, metrics: a },
-                    });
-                  }}
-                />
-                <input
-                  style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
-                  type="number"
-                  min={0}
-                  max={5}
-                  step={0.5}
-                  value={m.thisVal}
-                  onChange={(e) => {
-                    const a = [...content.comparison.metrics];
-                    a[idx] = { ...m, thisVal: Number(e.target.value) };
-                    onUpdate({
-                      comparison: { ...content.comparison, metrics: a },
-                    });
-                  }}
-                />
-                <input
-                  style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
-                  type="number"
-                  min={0}
-                  max={5}
-                  step={0.5}
-                  value={m.compVal}
-                  onChange={(e) => {
-                    const a = [...content.comparison.metrics];
-                    a[idx] = { ...m, compVal: Number(e.target.value) };
-                    onUpdate({
-                      comparison: { ...content.comparison, metrics: a },
-                    });
-                  }}
-                />
-                <button
-                  style={{
-                    width: 26,
-                    height: 26,
-                    background: "transparent",
-                    border: "1px solid #e8e8e8",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    color: "#bbb",
-                    fontSize: 11,
-                  }}
-                  onClick={() =>
-                    onUpdate({
-                      comparison: {
-                        ...content.comparison,
-                        metrics: content.comparison.metrics.filter(
-                          (_, i) => i !== idx,
-                        ),
-                      },
-                    })
-                  }
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button
-              style={{
-                ...inp,
-                background: "#f7f7f7",
-                cursor: "pointer",
-                textAlign: "center" as const,
-                color: "#888",
-                border: "1px dashed #ddd",
-              }}
-              onClick={() =>
-                onUpdate({
-                  comparison: {
-                    ...content.comparison,
-                    metrics: [
-                      ...content.comparison.metrics,
-                      { id: Date.now(), label: "새 항목", thisVal: 5, compVal: 4 },
-                    ],
-                  },
-                })
-              }
-            >
-              + 비교 항목 추가
-            </button>
-          </div>
-        </div>
-
-        {/* 리뷰 */}
-        <div style={sec}>
-          <div style={secTitle}>리뷰</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
-              <div>
-                <label style={lbl}>평균 별점</label>
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  type="number"
-                  min={0}
-                  max={5}
-                  step={0.1}
-                  value={content.reviews.average}
-                  onChange={(e) =>
-                    onUpdate({
-                      reviews: {
-                        ...content.reviews,
-                        average: Number(e.target.value),
-                      },
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label style={lbl}>총 리뷰 수</label>
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  type="number"
-                  min={0}
-                  value={content.reviews.totalCount}
-                  onChange={(e) =>
-                    onUpdate({
-                      reviews: {
-                        ...content.reviews,
-                        totalCount: Number(e.target.value),
-                      },
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label style={lbl}>별점 분포</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {content.reviews.distribution.map((d, idx) => (
-                  <div
-                    key={d.stars}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "40px 1fr",
-                      gap: 6,
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ fontSize: 11, color: "#888" }}>
-                      {d.stars}점
-                    </span>
-                    <input
-                      style={{ ...inp, fontSize: 11 }}
-                      type="number"
-                      min={0}
-                      value={d.count}
-                      onChange={(e) => {
-                        const a = [...content.reviews.distribution];
-                        a[idx] = { ...d, count: Number(e.target.value) };
-                        onUpdate({
-                          reviews: { ...content.reviews, distribution: a },
-                        });
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <label style={lbl}>리뷰 목록</label>
-            {content.reviews.items.map((item, idx) => (
-              <div
-                key={item.id}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 5,
-                  paddingBottom: 10,
-                  borderBottom:
-                    idx < content.reviews.items.length - 1
-                      ? "1px dashed #f0f0f0"
-                      : "none",
-                }}
-              >
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 60px 26px", gap: 5 }}>
-                  <input
-                    style={{ ...inp, fontSize: 11 }}
-                    placeholder="작성자"
-                    value={item.author}
-                    onChange={(e) => {
-                      const a = [...content.reviews.items];
-                      a[idx] = { ...item, author: e.target.value };
-                      onUpdate({ reviews: { ...content.reviews, items: a } });
-                    }}
-                  />
-                  <input
-                    style={{ ...inp, fontSize: 11, padding: "7px 4px", textAlign: "center" }}
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={item.rating}
-                    onChange={(e) => {
-                      const a = [...content.reviews.items];
-                      a[idx] = { ...item, rating: Number(e.target.value) };
-                      onUpdate({ reviews: { ...content.reviews, items: a } });
-                    }}
-                  />
-                  <button
-                    style={{
-                      width: 26,
-                      height: 26,
-                      background: "transparent",
-                      border: "1px solid #e8e8e8",
-                      borderRadius: 4,
-                      cursor: "pointer",
-                      color: "#bbb",
-                      fontSize: 11,
-                    }}
-                    onClick={() =>
-                      onUpdate({
-                        reviews: {
-                          ...content.reviews,
-                          items: content.reviews.items.filter(
-                            (_, i) => i !== idx,
-                          ),
-                        },
-                      })
-                    }
-                  >
-                    ✕
-                  </button>
-                </div>
-                <input
-                  style={{ ...inp, fontSize: 11 }}
-                  placeholder="날짜 (예: 2026.05.10)"
-                  value={item.date}
-                  onChange={(e) => {
-                    const a = [...content.reviews.items];
-                    a[idx] = { ...item, date: e.target.value };
-                    onUpdate({ reviews: { ...content.reviews, items: a } });
-                  }}
-                />
-                <textarea
-                  style={{
-                    ...inp,
-                    minHeight: 48,
-                    resize: "vertical" as const,
-                    fontSize: 11,
-                  }}
-                  placeholder="리뷰 내용"
-                  value={item.text}
-                  onChange={(e) => {
-                    const a = [...content.reviews.items];
-                    a[idx] = { ...item, text: e.target.value };
-                    onUpdate({ reviews: { ...content.reviews, items: a } });
-                  }}
-                />
-              </div>
-            ))}
-            <button
-              style={{
-                ...inp,
-                background: "#f7f7f7",
-                cursor: "pointer",
-                textAlign: "center" as const,
-                color: "#888",
-                border: "1px dashed #ddd",
-              }}
-              onClick={() =>
-                onUpdate({
-                  reviews: {
-                    ...content.reviews,
-                    items: [
-                      ...content.reviews.items,
-                      {
-                        id: Date.now(),
-                        author: "구매자**",
-                        rating: 5,
-                        date: "2026.01.01",
-                        text: "새 리뷰 내용",
-                      },
-                    ],
-                  },
-                })
-              }
-            >
-              + 리뷰 추가
-            </button>
-          </div>
-        </div>
-
-        {/* 사이즈 */}
-        <div style={{ ...sec, paddingBottom: 28 }}>
-          <div style={secTitle}>제품 사이즈 ({content.options.length}개)</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            {content.options.map((opt, idx) => (
-              <div
-                key={opt.id}
-                style={{ display: "flex", gap: 5, alignItems: "center" }}
-              >
-                <input
-                  style={{ ...inp, flex: 1, fontSize: 11 }}
-                  value={opt.size}
-                  onChange={(e) => {
-                    const a = [...content.options];
-                    a[idx] = { ...opt, size: e.target.value };
-                    onUpdate({ options: a });
-                  }}
-                />
-                <input
-                  style={{ ...inp, width: 54, fontSize: 11 }}
-                  value={opt.season}
-                  onChange={(e) => {
-                    const a = [...content.options];
-                    a[idx] = { ...opt, season: e.target.value };
-                    onUpdate({ options: a });
-                  }}
-                />
-                <button
-                  style={{
-                    width: 26,
-                    height: 26,
-                    background: "transparent",
-                    border: "1px solid #e8e8e8",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    color: "#bbb",
-                    fontSize: 11,
-                    flexShrink: 0,
-                  }}
-                  onClick={() =>
-                    onUpdate({
-                      options: content.options.filter((_, i) => i !== idx),
-                    })
-                  }
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button
-              style={{
-                ...inp,
-                background: "#f7f7f7",
-                cursor: "pointer",
-                textAlign: "center" as const,
-                color: "#888",
-                border: "1px dashed #ddd",
-              }}
-              onClick={() =>
-                onUpdate({
-                  options: [
-                    ...content.options,
-                    { id: Date.now(), size: "새 사이즈", season: "사계절" },
-                  ],
-                })
-              }
-            >
-              + 추가
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -5610,8 +4745,10 @@ export default function Page() {
           }}
         >
           <Hero content={content} onUpdate={updateContent} />
-          <CoreSpecs content={content} onUpdate={updateContent} />
           <TireStory content={content} onUpdate={updateContent} />
+          <CoreSpecs content={content} onUpdate={updateContent} />
+          <ProductClassification content={content} onUpdate={updateContent} />
+          <FeatureIcons content={content} onUpdate={updateContent} />
           <BrandValues content={content} onUpdate={updateContent} />
           <RentalProcess />
         </div>
