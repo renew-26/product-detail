@@ -1651,8 +1651,8 @@ function FeatureIcons({
         >
           <ImageSlot
             src={content.treadImage}
-            onUpload={() => {}}
-            onRemove={() => {}}
+            onUpload={(src) => onUpdate({ treadImage: src })}
+            onRemove={() => onUpdate({ treadImage: null })}
             aspectRatio="16/7"
             label="트레드 패턴"
             fallback={
