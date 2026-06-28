@@ -25,3 +25,10 @@ npm-debug.log*
 # Editor
 .vscode/
 .idea/
+
+# Claude Code / OMC
+.claude/
+.omc/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
